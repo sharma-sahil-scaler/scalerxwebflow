@@ -1,0 +1,17 @@
+{
+  "library": {
+    "name": "scalerxwebflow",
+    "components": [
+      "./src/**/*.webflow.@(js|jsx|mjs|ts|tsx)"
+    ],
+    "description": "",
+    "id": "scalerxwebflow"
+  },
+  "telemetry": {
+    "global": {
+      "allowTelemetry": false,
+      "lastPrompted": 1760008350303,
+      "version": "1.8.44"
+    }
+  }
+}
