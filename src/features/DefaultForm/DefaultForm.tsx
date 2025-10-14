@@ -28,7 +28,6 @@ const FormStep = () => {
 
 const DefaultForm = (props: DefaultFormProps) => {
   const { form_subtitle: formSubtitle } = props;
-  const { step } = useStore(defaultFormStore);
 
   return (
     <div className="flex h-full items-center justify-center px-4">
@@ -41,7 +40,6 @@ const DefaultForm = (props: DefaultFormProps) => {
           <CardTitle className="text-xl">Form Title</CardTitle>
           <CardDescription className="text-base">
             {formSubtitle}
-            {step}
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-auto flex-col px-4 pb-6 sm:px-6">

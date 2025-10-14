@@ -5,7 +5,8 @@
       "./src/**/*.webflow.@(js|jsx|mjs|ts|tsx)"
     ],
     "description": "",
-    "id": "scalerxwebflow"
+    "id": "scalerxwebflow",
+    "bundleConfig": "./webpack.override.cjs"
   },
   "telemetry": {
     "global": {

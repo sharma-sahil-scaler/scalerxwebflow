@@ -2,6 +2,8 @@ import { declareComponent } from "@webflow/react";
 import DefaultForm from "./DefaultForm";
 import { props } from "@webflow/data-types";
 
+import "@/global.css"
+
 const SignupFormComponent = declareComponent(DefaultForm, {
   name: "DefaultForm",
   description: "DefaultForm component",
