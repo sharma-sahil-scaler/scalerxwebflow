@@ -1,9 +1,10 @@
 import { useState } from "react";
+import ToastHost from "@/shared/components/ToastHost";
+import { toast } from "@/shared/stores/toast";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
 
-import SignupForm from "./features/DefaultForm/components/SignupForm";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -23,6 +24,17 @@ function App() {
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
         </button>
+        <button
+          onClick={() =>
+            toast.show({
+              title: "Saved",
+              description: "Your changes have been saved.",
+              variant: "success",
+            })
+          }
+        > 
+          Show success toast
+        </button>
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>
@@ -30,7 +42,7 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
-        <SignupForm />
+      <ToastHost />
     </>
   );
 }

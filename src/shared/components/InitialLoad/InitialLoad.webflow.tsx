@@ -2,6 +2,8 @@ import { declareComponent } from "@webflow/react";
 import InitialLoad from "./InitialLoad";
 import { props } from "@webflow/data-types";
 
+import "@/global.css";
+
 const InitialLoadComponent = declareComponent(InitialLoad, {
   name: "InitialLoad",
   description: "InitialLoad component",
@@ -15,6 +17,9 @@ const InitialLoadComponent = declareComponent(InitialLoad, {
       name: "Page Subproduct",
       defaultValue: "home",
     }),
+  },
+  options: {
+    ssr: false,
   },
 });
 

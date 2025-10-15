@@ -1,13 +1,14 @@
 import { useStore } from "@nanostores/react";
-import { $initialData } from "../../stores/initalData";
+import { $initialData } from "@/shared/stores/initialData";
 import { useEffect } from "react";
 import {
   getUTMPropagationParams,
   initializeUtmPropagation,
-} from "../../utils/analytics";
-import { lazyLoadGtm, pushServerEvents } from "../../utils/gtm";
-import tracker from "../../utils/tracker";
-import { getURLWithUTMParams } from "../../utils/url";
+} from "@/shared/utils/analytics";
+import { lazyLoadGtm, pushServerEvents } from "@/shared/utils/gtm";
+import ToastHost from "@/shared/components/ToastHost";
+import tracker from "@/shared/utils/tracker";
+import { getURLWithUTMParams } from "@/shared/utils/url";
 
 const InitialLoad = ({
   product,
@@ -56,7 +57,11 @@ const InitialLoad = ({
     }
   }, [isLoggedIn, error]);
 
-  return null;
+  return (
+    <>
+      <ToastHost />
+    </>
+  );
 };
 
 export default InitialLoad;

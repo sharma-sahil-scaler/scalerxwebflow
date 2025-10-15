@@ -163,7 +163,7 @@ export async function generateJWT(): Promise<string | undefined> {
       "X-Requested-With": "XMLHttpRequest",
       ...(csrfMeta?.content ? { "X-CSRF-Token": csrfMeta.content } : {}),
     };
-    const response = await fetch("https://10.staging.sclr.ac/generate-jwt", {
+    const response = await fetch("/generate-jwt", {
       method: "POST",
       headers,
       body: JSON.stringify({}),

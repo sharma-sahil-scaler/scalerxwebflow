@@ -4,50 +4,132 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../../components/ui/card";
+} from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
 import { useStore } from "@nanostores/react";
 import { defaultFormStore } from "./store";
 import SignupForm from "./components/SignupForm";
 import OtpStep from "./components/OtpForm";
-
+import { $initialData } from "@/shared/stores/initialData";
 
 type DefaultFormProps = {
   form_subtitle: string;
+  turnstile_key: string;
+  signup_intent: string;
+  otp_intent: string;
+  product: string;
+  sub_product: string;
+  platform: string;
+  form_title: string;
 };
 
-const FormStep = () => {
+const FormStep = ({
+  turnstileKey,
+  signupIntent,
+  otpIntent,
+  product,
+  subProduct,
+  platform,
+}: {
+  turnstileKey: string;
+  signupIntent: string;
+  otpIntent: string;
+  product: string;
+  subProduct: string;
+  platform: string;
+}) => {
   const { step } = useStore(defaultFormStore);
 
   switch (step) {
-    case 'signup':
-      return <SignupForm />;
-    case 'otp':
-      return <OtpStep />;
+    case "signup":
+      return (
+        <SignupForm
+          attributions={{
+            intent: signupIntent,
+            product,
+            sub_product: subProduct,
+            platform,
+          }}
+          turnstileKey={turnstileKey}
+        />
+      );
+    case "otp":
+      return (
+        <OtpStep
+          attributions={{
+            intent: otpIntent,
+            product,
+            sub_product: subProduct,
+            platform,
+          }}
+        />
+      );
+    default:
+      return null;
   }
 };
 
 const DefaultForm = (props: DefaultFormProps) => {
-  const { form_subtitle: formSubtitle } = props;
+  const {
+    form_subtitle: formSubtitle,
+    turnstile_key: turnstileKey,
+    signup_intent: signupIntent,
+    otp_intent: otpIntent,
+    product: product,
+    sub_product: subProduct,
+    platform: platform,
+    form_title: formTitle,
+  } = props;
 
-  return (
-    <div className="flex h-full items-center justify-center px-4">
-      <Card
-        className="no-scrollbar gap-2 overflow-y-scroll bg-[#fafbfc] py-4 sm:aspect-[430/420] sm:max-h-[80vh] sm:w-[30rem] sm:max-w-[50rem]"
-        aria-label="Test Issuance Form"
-        role="form"
-      >
-        <CardHeader className="px-4 md:px-6">
-          <CardTitle className="text-xl">Form Title</CardTitle>
-          <CardDescription className="text-base">
-            {formSubtitle}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-auto flex-col px-4 pb-6 sm:px-6">
-          <FormStep />
-        </CardContent>
-      </Card>
-    </div>
-  );
+  const initialStore = useStore($initialData);
+  const loading = initialStore?.loading ?? false;
+  const isLoggedIn = initialStore?.data?.isLoggedIn ?? false;
+  const isPhoneVerified = initialStore?.data?.isPhoneVerified ?? false;
+
+  if (loading) {
+    return (
+      <div className="flex h-full items-center justify-center px-4">
+        <Card
+          className="no-scrollbar gap-2 overflow-y-scroll items-center justify-center bg-[#fafbfc] py-4 sm:aspect-[430/420] sm:max-h-[80vh] sm:w-[30rem] sm:max-w-[50rem]"
+          aria-label="Test Issuance Form"
+        >
+          <Spinner className="size-12" />
+        </Card>
+      </div>
+    );
+  } else {
+    return (
+      <div className="flex h-full items-center justify-center px-4">
+        <Card
+          className="no-scrollbar gap-2 overflow-y-scroll bg-[#fafbfc] py-4 sm:aspect-[430/420] sm:max-h-[80vh] sm:w-[30rem] sm:max-w-[50rem]"
+          aria-label="Test Issuance Form"
+        >
+          <CardHeader className="px-4 md:px-6">
+            <CardTitle className="text-xl">{formTitle}</CardTitle>
+            <CardDescription className="text-base">
+              {formSubtitle}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-auto flex-col px-4 pb-6 sm:px-6">
+            {isLoggedIn && isPhoneVerified ? (
+              <div>Already Verified</div>
+            ) : (
+              <FormStep
+                {...{
+                  turnstileKey,
+                  signupIntent,
+                  otpIntent,
+                  product,
+                  subProduct,
+                  platform,
+                }}
+              />
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 };
 
 export default DefaultForm;

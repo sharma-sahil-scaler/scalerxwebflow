@@ -17,7 +17,7 @@ export const [createFetcherStore, , { mutateCache }] = nanoquery({
     const { csrf_token: csrfToken } =
       (await apiRequest<CsrfResponse>(
         "GET",
-        "https://10.staging.sclr.ac/csrf-token"
+        "/csrf-token"
       )) || {};
 
     if (csrfToken) addMeta("csrf-token", csrfToken);
@@ -29,7 +29,7 @@ export const [createFetcherStore, , { mutateCache }] = nanoquery({
       data: { attributes },
     } = await apiRequest<UserResponse>(
       "GET",
-      "https://10.staging.sclr.ac/api/v3/users",
+      "/api/v3/users",
       null,
       {
         headers: {

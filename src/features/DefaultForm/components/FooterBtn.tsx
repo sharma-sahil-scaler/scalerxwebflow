@@ -8,10 +8,12 @@ import { Separator } from "@/components/ui/separator";
 export const FooterBtn = ({
   isDisabled = false,
   showLoaderOnDisabled = true,
+  footerText = "🔥 <b>10k+</b> working professionals already enrolled",
 }: {
   currentStep: string;
   isDisabled?: boolean;
   showLoaderOnDisabled?: boolean;
+  footerText?: string;
 }) => {
   return (
     <Flex align="center" direction="col" gap="md" justify="end">
@@ -33,7 +35,7 @@ export const FooterBtn = ({
         </Button>
         <p
           className="text-sm"
-          dangerouslySetInnerHTML={{ __html: "Social Proofing" }}
+          dangerouslySetInnerHTML={{ __html: footerText }}
         />
       </Flex>
     </Flex>
