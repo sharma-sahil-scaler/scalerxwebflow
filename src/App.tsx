@@ -3,8 +3,8 @@ import ToastHost from "@/shared/components/ToastHost";
 import { toast } from "@/shared/stores/toast";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
-import "./App.css";
-
+import DefaultForm from "./features/DefaultForm/DefaultForm";
+import { ShadowDom } from "./components/ShadowDom";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -32,7 +32,7 @@ function App() {
               variant: "success",
             })
           }
-        > 
+        >
           Show success toast
         </button>
         <p>
@@ -43,6 +43,19 @@ function App() {
         Click on the Vite and React logos to learn more
       </p>
       <ToastHost />
+
+      <ShadowDom>
+        <DefaultForm
+          form_subtitle="Powered by Scaler Companion"
+          signup_intent="signup"
+          otp_intent="otp"
+          product="product"
+          sub_product="sub_product"
+          platform="platform"
+          form_title="Talk To a Scaler Career Counsellor"
+          turnstile_key="0x4AAAAAAB7N32HVHHzNUVx4"
+        />
+      </ShadowDom>
     </>
   );
 }

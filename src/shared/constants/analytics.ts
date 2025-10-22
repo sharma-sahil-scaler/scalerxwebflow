@@ -430,4 +430,4 @@ export const PRODUCTS = {
 };
 
 export const COOKIE_KEY = "gtm_data"
-export const GTM_ID = "GTM-M94JJN9"
+export const GTM_ID = "GTM-M94JJ9"

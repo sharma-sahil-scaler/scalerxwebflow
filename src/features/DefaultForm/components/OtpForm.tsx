@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { defaultFormStore } from "../store";
 import { verifyUser } from "../api";
+import { parsePhoneNumber } from "libphonenumber-js";
 import {
   Form,
   FormControl,
@@ -49,13 +50,16 @@ const OtpForm = (props: {
   const handleSubmit = useCallback(
     async (data: z.infer<typeof otpSchema>) => {
       try {
+        const parsedPhone = parsePhoneNumber(phoneNumber || "");
+        const formattedNumber = `+${parsedPhone.countryCallingCode}-${parsedPhone.nationalNumber}`;
+
         trackClick({ click_source: "otp_form", click_type: "otp_submit" });
         setSubmitting(true);
         await verifyUser({
           attributions,
           user: {
             email: email || "",
-            phone_number: phoneNumber || "",
+            phone_number: formattedNumber || "",
             skip_existing_user_check: true,
             otp: data.otp,
           },
@@ -65,6 +69,7 @@ const OtpForm = (props: {
           variant: "success",
         });
         trackClick({ click_source: "otp_form", click_type: "otp_verified" });
+        defaultFormStore.set({ step: "success" });
       } catch (error: unknown) {
         if (error instanceof ApiError) {
           const status = error.response?.status;

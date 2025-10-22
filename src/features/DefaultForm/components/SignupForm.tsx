@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Form,
   FormField,
@@ -27,12 +27,22 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { FooterBtn } from "./FooterBtn";
 import { defaultFormStore } from "../store";
-import { createUser, updateUser } from "../api";
+import { createUser, requestCallback, updateUser } from "../api";
 import { useTracking } from "@/shared/hooks/useTracking";
 import { $initialData } from "@/shared/stores/initialData";
 import { parsePhoneNumber } from "libphonenumber-js";
-import TurnstileVerification from "@/shared/components/Turnstile/Turnstile";
-import { CREATE_REGISTRATION_ERROR_MAP } from "../constant";
+import { CREATE_REGISTRATION_ERROR_MAP, JOB_TITLE_OPTIONS } from "../constant";
+import ShadowTurnstile from "@/shared/components/Turnstile/Turnstile";
+import { Flex } from "@/components/layout/flex";
+import { useWebflowContext } from "@webflow/react";
+
+type UserProfile = {
+  name?: string;
+  email?: string;
+  phone_number?: string;
+  orgyear?: string;
+  whatsapp_consent?: boolean;
+};
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -40,12 +50,13 @@ const formSchema = z.object({
     .string()
     .min(2, { message: "Name must be at least 2 characters long" }),
   orgyear: z.string().min(4, { message: "Graduation year is required" }),
-  phone: z
+  phone_number: z
     .string()
     .min(1, "Phone number is required")
     .refine((value) => value && isValidPhoneNumber(value), {
       message: "Invalid phone number",
     }),
+  position: z.string().min(1, { message: "Position is required" }),
   whatsapp_consent: z.boolean(),
 });
 
@@ -56,17 +67,26 @@ const SignupForm = (props: {
     product: string;
     sub_product: string;
   };
-  turnstileKey: string;
+  siteKey: string;
 }) => {
-  const { attributions } = props;
+  const { attributions, siteKey } = props;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      phone_number: "",
+      orgyear: "",
+      position: "",
+      whatsapp_consent: false,
+    },
   });
   const { trackClick, trackFormSubmitStatus, trackError } = useTracking();
   const currentYear = new Date().getFullYear();
   const initialData = useStore($initialData);
   const isLoggedIn = initialData?.data?.isLoggedIn;
+  const isPhoneVerified = initialData?.data?.isPhoneVerified;
   const [token, setToken] = useState("");
 
   const graduationYears = useMemo(() => {
@@ -75,42 +95,62 @@ const SignupForm = (props: {
     );
   }, [currentYear]);
 
+  const handleTokenObtained = useCallback((token: string) => {
+    setToken(token);
+  }, []);
+
+  const { mode } = useWebflowContext();
+
   const handleSubmit = useCallback(
     async (data: z.infer<typeof formSchema>) => {
       try {
         setIsSubmitting(true);
         trackClick({ click_text: "Get Started", click_type: "form_filled" });
-        const parsedPhone = parsePhoneNumber(data.phone);
+        const parsedPhone = parsePhoneNumber(data.phone_number);
+        const countryCode = `+${parsedPhone.countryCallingCode}`;
         const formattedNumber = `+${parsedPhone.countryCallingCode}-${parsedPhone.nationalNumber}`;
-        const payload = {
+
+        const toWhatsappConsent = (consent: boolean) =>
+          consent ? "whatsapp_consent_yes" : "whatsapp_consent_no";
+
+        const basePayload = {
           account_type: "academy",
           attributions,
-          "cf-turnstile-response": token,
           type: "marketing",
+          "cf-turnstile-response": token,
           user: {
             ...data,
-            country_code: `+${parsedPhone.countryCallingCode}`,
+            country_code: countryCode,
             phone_number: formattedNumber,
             skip_existing_user_check: true,
-            whatsapp_consent: data.whatsapp_consent
-              ? "whatsapp_consent_yes"
-              : "whatsapp_consent_no",
+            whatsapp_consent: toWhatsappConsent(data.whatsapp_consent),
           },
-        };
+        } as const;
 
-        if (isLoggedIn) {
-          await updateUser(payload);
+        if (isPhoneVerified && isLoggedIn) {
+          await requestCallback({
+            attributions,
+            user: {
+              program: "Online Mba",
+              position: data.position,
+            },
+          });
+        } else if (isLoggedIn) {
+          await updateUser(basePayload);
         } else {
-          await createUser(payload);
+          await createUser(basePayload);
         }
+
         toast.show({ title: "Signup successful", variant: "success" });
+        trackFormSubmitStatus("signup_form_success");
+        trackClick({ click_source: "form_first", click_type: "requested_otp" });
+
+        if (isPhoneVerified && isLoggedIn) return;
         defaultFormStore.set({
           step: "otp",
           email: data.email,
-          phoneNumber: data.phone,
+          phoneNumber: data.phone_number,
         });
-        trackFormSubmitStatus("signup_form_success");
-        trackClick({ click_source: "form_first", click_type: "requested_otp" });
       } catch (error: unknown) {
         if (error instanceof ApiError) {
           const status = error.response?.status;
@@ -133,12 +173,34 @@ const SignupForm = (props: {
     [
       attributions,
       isLoggedIn,
+      isPhoneVerified,
       token,
       trackClick,
       trackError,
       trackFormSubmitStatus,
     ]
   );
+
+  useEffect(() => {
+    const userData = initialData?.data?.userData as
+      | UserProfile
+      | null
+      | undefined;
+
+    if (!userData) return;
+    const phone = userData.phone_number ?? "";
+    const [, phoneNumber] = phone.includes("-")
+      ? phone.split("-")
+      : ["+91", ""];
+
+    form.reset({
+      name: userData?.name ?? "",
+      email: userData?.email ?? "",
+      phone_number: phoneNumber,
+      orgyear: userData?.orgyear ?? "",
+      whatsapp_consent: Boolean(userData?.whatsapp_consent ?? false),
+    });
+  }, [form, initialData?.data?.userData]);
 
   return (
     <Form {...form}>
@@ -149,24 +211,6 @@ const SignupForm = (props: {
         <div
           className={cn("flex flex-col gap-2", "no-scrollbar overflow-y-auto")}
         >
-          <FormField
-            name="name"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem className="mt-2 mr-2 flex w-full flex-col gap-2">
-                <FormControl>
-                  <Input
-                    className="h-10 sm:h-12"
-                    placeholder="Name"
-                    aria-describedby="name-message"
-                    data-field-id="name"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage id="name-message" />
-              </FormItem>
-            )}
-          />
           <FormField
             name="email"
             control={form.control}
@@ -186,27 +230,57 @@ const SignupForm = (props: {
               </FormItem>
             )}
           />
+          <Flex>
+            <FormField
+              name="name"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem className="mt-2 mr-2 flex w-full flex-col gap-2">
+                  <FormControl>
+                    <Input
+                      className="h-10 sm:h-12"
+                      placeholder="Name"
+                      aria-describedby="name-message"
+                      data-field-id="name"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage id="name-message" />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="orgyear"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem className="mt-2 mr-2 flex w-full gap-2">
+                  <Select
+                    value={field.value}
+                    onValueChange={(value: string) => {
+                      field.onChange(value);
+                    }}
+                  >
+                    <FormControl className="!h-10 w-full text-base sm:!h-12">
+                      <SelectTrigger>
+                        <SelectValue placeholder="Graduation year" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className="h-58 w-full">
+                      {graduationYears.map((year) => (
+                        <SelectItem key={year} value={year}>
+                          {year}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </Flex>
+
           <FormField
-            name="phone"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem className="mt-2 mr-2 flex w-full flex-col gap-2">
-                <FormControl className="h-10 sm:h-12">
-                  <PhoneInput
-                    className="flex w-full gap-4"
-                    placeholder="Mobile Number"
-                    aria-describedby="phone-message"
-                    data-field-id="phone"
-                    defaultCountry="IN"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage id="phone-message" />
-              </FormItem>
-            )}
-          />
-          <FormField
-            name="orgyear"
+            name="position"
             control={form.control}
             render={({ field }) => (
               <FormItem className="mt-2 mr-2 flex w-full gap-2">
@@ -218,18 +292,38 @@ const SignupForm = (props: {
                 >
                   <FormControl className="!h-10 w-full text-base sm:!h-12">
                     <SelectTrigger>
-                      <SelectValue placeholder="Graduation year" />
+                      <SelectValue placeholder="Select Job Title" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent className="h-58 w-full">
-                    {graduationYears.map((year) => (
-                      <SelectItem key={year} value={year}>
-                        {year}
+                    {JOB_TITLE_OPTIONS.map((jobTitle) => (
+                      <SelectItem key={jobTitle.value} value={jobTitle.value}>
+                        {jobTitle.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
                 <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            name="phone_number"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem className="mt-2 mr-2 flex w-full flex-col gap-2">
+                <FormControl className="h-10 sm:h-12">
+                  <PhoneInput
+                    className="flex w-full gap-4"
+                    placeholder="Mobile Number"
+                    aria-describedby="phone-message"
+                    data-field-id="phone_number"
+                    defaultCountry="IN"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage id="phone-message" />
               </FormItem>
             )}
           />
@@ -241,7 +335,7 @@ const SignupForm = (props: {
                 <FormControl>
                   <Checkbox
                     className="mr-0 data-[state=checked]:border-none data-[state=checked]:bg-[#006AFF]"
-                    checked={field.value}
+                    checked={!!field.value}
                     onCheckedChange={field.onChange}
                   />
                 </FormControl>
@@ -273,10 +367,12 @@ const SignupForm = (props: {
               Privacy Policy
             </a>
           </div>
-          <TurnstileVerification
-            siteKey={props.turnstileKey}
-            onTokenObtained={setToken}
-          />
+          {mode === "publish" && (
+            <ShadowTurnstile
+              onTokenObtained={handleTokenObtained}
+              siteKey={siteKey}
+            />
+          )}
           <FooterBtn currentStep="personal-detail" isDisabled={isSubmitting} />
         </div>
       </form>

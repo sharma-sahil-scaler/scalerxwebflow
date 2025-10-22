@@ -1,45 +1,29 @@
-"use client";
+import { useCallback } from "react";
+import useTurnstile from "@/shared/hooks/useTurnstile";
 
-import React, { useEffect } from "react";
-
-import type {
-  TurnstileInstance,
-  TurnstileProps,
-} from "@marsidev/react-turnstile";
-
-import { Turnstile } from "@marsidev/react-turnstile";
-
-export default function TurnstileVerification({
-  options = {},
+const ShadowTurnstile = ({
   onTokenObtained,
   siteKey,
 }: {
-  onTokenObtained: (token: string) => void;
-  options?: TurnstileProps["options"];
   siteKey: string;
-}) {
-  const ref = React.useRef<TurnstileInstance>(null);
-  const [token, setToken] = React.useState<string | undefined>();
+  onTokenObtained: (token: string) => void;
+}) => {
+  const handleError = useCallback((e: Error) => {
+    console.error("Turnstile error:", e.message);
+  }, []);
 
-  useEffect(() => {
-    if (token) {
-      onTokenObtained(token);
-    }
-  }, [onTokenObtained, token]);
+  const handleExpired = useCallback(() => {
+    console.error("Turnstile expired");
+  }, []);
 
-  return (
-    <Turnstile
-      ref={ref}
-      onError={() => ref.current?.reset()}
-      onExpire={() => ref.current?.reset()}
-      onSuccess={(payload: unknown) => {
-        setToken(payload as string);
-      }}
-      options={options}
-      scriptOptions={{
-        defer: true,
-      }}
-      {...{ siteKey }}
-    />
-  );
-}
+  const { slotRef, slotName } = useTurnstile({
+    siteKey,
+    onTokenObtained,
+    onError: handleError,
+    onExpired: handleExpired,
+  });
+
+  return <slot ref={slotRef} name={slotName}></slot>;
+};
+
+export default ShadowTurnstile;

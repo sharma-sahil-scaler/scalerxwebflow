@@ -10,33 +10,34 @@ import { useStore } from "@nanostores/react";
 import { defaultFormStore } from "./store";
 import SignupForm from "./components/SignupForm";
 import OtpStep from "./components/OtpForm";
+import SuccessAnimation from "./components/SuccessAnimation";
 import { $initialData } from "@/shared/stores/initialData";
 
 type DefaultFormProps = {
   form_subtitle: string;
-  turnstile_key: string;
   signup_intent: string;
   otp_intent: string;
   product: string;
   sub_product: string;
   platform: string;
   form_title: string;
+  turnstile_key: string;
 };
 
 const FormStep = ({
-  turnstileKey,
   signupIntent,
   otpIntent,
   product,
   subProduct,
   platform,
+  siteKey,
 }: {
-  turnstileKey: string;
   signupIntent: string;
   otpIntent: string;
   product: string;
   subProduct: string;
   platform: string;
+  siteKey: string;
 }) => {
   const { step } = useStore(defaultFormStore);
 
@@ -50,7 +51,7 @@ const FormStep = ({
             sub_product: subProduct,
             platform,
           }}
-          turnstileKey={turnstileKey}
+          {...{ siteKey }}
         />
       );
     case "otp":
@@ -64,6 +65,8 @@ const FormStep = ({
           }}
         />
       );
+    case "success":
+      return <SuccessAnimation />;
     default:
       return null;
   }
@@ -72,19 +75,21 @@ const FormStep = ({
 const DefaultForm = (props: DefaultFormProps) => {
   const {
     form_subtitle: formSubtitle,
-    turnstile_key: turnstileKey,
     signup_intent: signupIntent,
     otp_intent: otpIntent,
     product: product,
     sub_product: subProduct,
     platform: platform,
     form_title: formTitle,
+    turnstile_key: siteKey,
   } = props;
 
   const initialStore = useStore($initialData);
   const loading = initialStore?.loading ?? false;
   const isLoggedIn = initialStore?.data?.isLoggedIn ?? false;
   const isPhoneVerified = initialStore?.data?.isPhoneVerified ?? false;
+
+  console.log(props);
 
   if (loading) {
     return (
@@ -116,12 +121,12 @@ const DefaultForm = (props: DefaultFormProps) => {
             ) : (
               <FormStep
                 {...{
-                  turnstileKey,
                   signupIntent,
                   otpIntent,
                   product,
                   subProduct,
                   platform,
+                  siteKey,
                 }}
               />
             )}

@@ -1,7 +1,7 @@
 import { map } from 'nanostores'
 
 export interface DefaultFormStore {
-  step: 'signup' | 'otp';
+  step: 'signup' | 'otp' | 'success';
   email?: string;
   phoneNumber?: string;
   program?: string;
