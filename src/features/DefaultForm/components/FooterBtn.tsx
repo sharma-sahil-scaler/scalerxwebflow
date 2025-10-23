@@ -1,9 +1,9 @@
 import { Loader2 } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/common/components/ui/button";
 
-import { Flex } from "@/components/layout/flex";
-import { Separator } from "@/components/ui/separator";
+import { Flex } from "@/common/components/layout/flex";
+import { Separator } from "@/common/components/ui/separator";
 
 export const FooterBtn = ({
   isDisabled = false,

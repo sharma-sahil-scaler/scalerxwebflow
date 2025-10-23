@@ -174,5 +174,5 @@ export async function generateJWT(): Promise<string | undefined> {
     console.error("Error generating JWT:", error);
     throw error;
   }
-  return token;
+  return token
 }

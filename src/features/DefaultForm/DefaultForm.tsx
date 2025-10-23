@@ -4,14 +4,14 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Spinner } from "@/components/ui/spinner";
+} from "@/common/components/ui/card";
+import { Spinner } from "@/common/components/ui/spinner";
 import { useStore } from "@nanostores/react";
 import { defaultFormStore } from "./store";
 import SignupForm from "./components/SignupForm";
 import OtpStep from "./components/OtpForm";
 import SuccessAnimation from "./components/SuccessAnimation";
-import { $initialData } from "@/shared/stores/initialData";
+import { $initialData } from "@/common/stores/initial-data";
 
 type DefaultFormProps = {
   form_subtitle: string;
@@ -86,10 +86,6 @@ const DefaultForm = (props: DefaultFormProps) => {
 
   const initialStore = useStore($initialData);
   const loading = initialStore?.loading ?? false;
-  const isLoggedIn = initialStore?.data?.isLoggedIn ?? false;
-  const isPhoneVerified = initialStore?.data?.isPhoneVerified ?? false;
-
-  console.log(props);
 
   if (loading) {
     return (
@@ -116,20 +112,16 @@ const DefaultForm = (props: DefaultFormProps) => {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-auto flex-col px-4 pb-6 sm:px-6">
-            {isLoggedIn && isPhoneVerified ? (
-              <div>Already Verified</div>
-            ) : (
-              <FormStep
-                {...{
-                  signupIntent,
-                  otpIntent,
-                  product,
-                  subProduct,
-                  platform,
-                  siteKey,
-                }}
-              />
-            )}
+            <FormStep
+              {...{
+                signupIntent,
+                otpIntent,
+                product,
+                subProduct,
+                platform,
+                siteKey,
+              }}
+            />
           </CardContent>
         </Card>
       </div>

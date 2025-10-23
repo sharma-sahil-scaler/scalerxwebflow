@@ -1,9 +1,9 @@
 /* eslint-disable */
 // @ts-nocheck
-import { GTM_ID } from "../constants/analytics";
-import { getCookie } from "./cookie";
-import tracker from "./tracker";
-import { deleteCookie } from "./cookie";
+import { GTM_ID } from "@/common/constants/analytics";
+import { getCookie } from "@/common/utils/cookie";
+import tracker from "@/common/utils/tracker";
+import { deleteCookie } from "@/common/utils/cookie";
 
 const COOKIE_KEY = "gtm_data"
 

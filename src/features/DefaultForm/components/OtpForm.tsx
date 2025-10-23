@@ -3,8 +3,8 @@ import { z } from "zod";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { defaultFormStore } from "../store";
-import { verifyUser } from "../api";
+import { defaultFormStore } from "@/features/DefaultForm/store";
+import { verifyUser } from "@/features/DefaultForm/api";
 import { parsePhoneNumber } from "libphonenumber-js";
 import {
   Form,
@@ -13,19 +13,19 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Flex } from "@/components/layout/flex";
-import { toast } from "@/shared/stores/toast";
-import { PhoneInput } from "@/components/ui/phone-input";
+} from "@/common/components/ui/form";
+import { Flex } from "@/common/components/layout/flex";
+import { toast } from "@/common/stores/toast";
+import { PhoneInput } from "@/common/components/ui/phone-input";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
-} from "@/components/ui/input-otp";
-import { ApiError } from "@/shared/utils/api";
+} from "@/common/components/ui/input-otp";
+import { ApiError } from "@/common/utils/api";
 import { FooterBtn } from "./FooterBtn";
 import { VERIFY_OTP_ERROR_MAP } from "../constant";
-import { useTracking } from "@/shared/hooks/useTracking";
+import { useTracking } from "@/common/hooks/useTracking";
 
 const otpSchema = z.object({
   otp: z.string().min(4, { message: "Enter OTP" }),

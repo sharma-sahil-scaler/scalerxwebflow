@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 
-import tracker, { type CustomAttributes } from "@/shared/utils/tracker";
-import { type EventPayload } from "@/shared/types/gtm";
+import tracker, { type CustomAttributes } from "@/common/utils/tracker";
+import { type EventPayload } from "@/common/types/gtm";
 
 export const useTracking = () => {
   const trackClick = useCallback(

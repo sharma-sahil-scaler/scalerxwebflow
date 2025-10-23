@@ -60,7 +60,7 @@ export const [createFetcherStore, , { mutateCache }] = nanoquery({
 const defaultInitialData: InitialData = {
   isLoggedIn: false,
   isPhoneVerified: false,
-  userData: {},
+  userData: null,
 };
 
 export const $initialData = createFetcherStore<InitialData | null>(["/auth"]);

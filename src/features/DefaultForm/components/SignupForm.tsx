@@ -1,46 +1,45 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import ShadowTurnstile from "@/common/components/integrations/shadow-turnstile";
+import { Flex } from "@/common/components/layout/flex";
+import { Checkbox } from "@/common/components/ui/checkbox";
 import {
   Form,
-  FormField,
   FormControl,
-  FormItem,
   FormDescription,
+  FormField,
+  FormItem,
   FormMessage,
-} from "@/components/ui/form";
-import { isValidPhoneNumber } from "libphonenumber-js";
-import { useStore } from "@nanostores/react";
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "@/shared/stores/toast";
-import { ApiError } from "@/shared/utils/api";
-import { PhoneInput } from "@/components/ui/phone-input";
+} from "@/common/components/ui/form";
+import { Input } from "@/common/components/ui/input";
+import { PhoneInput } from "@/common/components/ui/phone-input";
 import {
   Select,
-  SelectTrigger,
-  SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { FooterBtn } from "./FooterBtn";
-import { defaultFormStore } from "../store";
-import { createUser, requestCallback, updateUser } from "../api";
-import { useTracking } from "@/shared/hooks/useTracking";
-import { $initialData } from "@/shared/stores/initialData";
-import { parsePhoneNumber } from "libphonenumber-js";
-import { CREATE_REGISTRATION_ERROR_MAP, JOB_TITLE_OPTIONS } from "../constant";
-import ShadowTurnstile from "@/shared/components/Turnstile/Turnstile";
-import { Flex } from "@/components/layout/flex";
+  SelectTrigger,
+  SelectValue,
+} from "@/common/components/ui/select";
+import { useTracking } from "@/common/hooks/useTracking";
+import { $initialData } from "@/common/stores/initial-data";
+import { toast } from "@/common/stores/toast";
+import { ApiError } from "@/common/utils/api";
+import { createUser, requestCallback, updateUser } from "@/features/DefaultForm/api";
+import { defaultFormStore } from "@/features/DefaultForm/store";
+import { cn } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useStore } from "@nanostores/react";
 import { useWebflowContext } from "@webflow/react";
+import { isValidPhoneNumber, parsePhoneNumber } from "libphonenumber-js";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { CREATE_REGISTRATION_ERROR_MAP, JOB_TITLE_OPTIONS } from "../constant";
+import { FooterBtn } from "./FooterBtn";
 
 type UserProfile = {
   name?: string;
   email?: string;
   phone_number?: string;
-  orgyear?: string;
+  orgyear?: string | number;
   whatsapp_consent?: boolean;
 };
 
@@ -87,6 +86,10 @@ const SignupForm = (props: {
   const initialData = useStore($initialData);
   const isLoggedIn = initialData?.data?.isLoggedIn;
   const isPhoneVerified = initialData?.data?.isPhoneVerified;
+  const userData = initialData?.data?.userData as
+    | UserProfile
+    | null
+    | undefined;
   const [token, setToken] = useState("");
 
   const graduationYears = useMemo(() => {
@@ -182,25 +185,17 @@ const SignupForm = (props: {
   );
 
   useEffect(() => {
-    const userData = initialData?.data?.userData as
-      | UserProfile
-      | null
-      | undefined;
-
-    if (!userData) return;
-    const phone = userData.phone_number ?? "";
-    const [, phoneNumber] = phone.includes("-")
-      ? phone.split("-")
-      : ["+91", ""];
-
-    form.reset({
-      name: userData?.name ?? "",
-      email: userData?.email ?? "",
-      phone_number: phoneNumber,
-      orgyear: userData?.orgyear ?? "",
-      whatsapp_consent: Boolean(userData?.whatsapp_consent ?? false),
-    });
-  }, [form, initialData?.data?.userData]);
+    if (userData) {
+      form.reset({
+        email: userData.email || "",
+        name: userData.name || "",
+        phone_number: (userData.phone_number || "").replace("-", ""),
+        orgyear: (userData.orgyear || "").toString(),
+        position: "",
+        whatsapp_consent: true,
+      });
+    }
+  }, [form, userData]);
 
   return (
     <Form {...form}>
@@ -223,6 +218,7 @@ const SignupForm = (props: {
                     aria-describedby="email-message"
                     data-field-id="email"
                     type="email"
+                    disabled={isLoggedIn}
                     {...field}
                   />
                 </FormControl>
@@ -242,6 +238,7 @@ const SignupForm = (props: {
                       placeholder="Name"
                       aria-describedby="name-message"
                       data-field-id="name"
+                      disabled={isLoggedIn}
                       {...field}
                     />
                   </FormControl>
@@ -255,6 +252,7 @@ const SignupForm = (props: {
               render={({ field }) => (
                 <FormItem className="mt-2 mr-2 flex w-full gap-2">
                   <Select
+                    disabled={isLoggedIn}
                     value={field.value}
                     onValueChange={(value: string) => {
                       field.onChange(value);
@@ -320,6 +318,7 @@ const SignupForm = (props: {
                     aria-describedby="phone-message"
                     data-field-id="phone_number"
                     defaultCountry="IN"
+                    disabled={isLoggedIn}
                     {...field}
                   />
                 </FormControl>

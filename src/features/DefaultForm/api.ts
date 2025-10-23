@@ -1,4 +1,4 @@
-import { apiRequest } from "@/shared/utils/api";
+import { apiRequest } from "@/common/utils/api";
 
 interface CreateRegistrationPayload {
   account_type: string;
