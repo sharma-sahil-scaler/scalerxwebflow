@@ -80,7 +80,7 @@ export const useAnalyticsHandler = () => {
 
       tracker.click({
         click_type:
-          attributes.label || attributes.element_text || "button_click",
+          attributes.click_type || "button_click",
         click_text: attributes.element_text || "button_click",
         click_source: attributes.source || "unknown"
       });
@@ -99,12 +99,9 @@ export const useAnalyticsHandler = () => {
       viewedSections.add(element);
       const attributes = extractAttributes(element);
 
-      tracker.click({
+      tracker.sectionView({
         click_type: attributes.label || attributes.element_id || "section_view",
-        custom: {
-          ...attributes,
-          interaction_type: "view",
-        },
+        section_name: attributes.section_name || "section_view",
       });
     },
     [extractAttributes]

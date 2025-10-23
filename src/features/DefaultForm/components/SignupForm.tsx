@@ -148,7 +148,12 @@ const SignupForm = (props: {
         trackFormSubmitStatus("signup_form_success");
         trackClick({ click_source: "form_first", click_type: "requested_otp" });
 
-        if (isPhoneVerified && isLoggedIn) return;
+        if (isPhoneVerified && isLoggedIn) {
+          defaultFormStore.set({
+            step: "success",
+          });
+          return;
+        };
         defaultFormStore.set({
           step: "otp",
           email: data.email,
@@ -218,7 +223,7 @@ const SignupForm = (props: {
                     aria-describedby="email-message"
                     data-field-id="email"
                     type="email"
-                    disabled={isLoggedIn}
+                    disabled={isLoggedIn && !!field.value}
                     {...field}
                   />
                 </FormControl>
@@ -238,7 +243,7 @@ const SignupForm = (props: {
                       placeholder="Name"
                       aria-describedby="name-message"
                       data-field-id="name"
-                      disabled={isLoggedIn}
+                      disabled={isLoggedIn && !!field.value}
                       {...field}
                     />
                   </FormControl>
@@ -252,7 +257,7 @@ const SignupForm = (props: {
               render={({ field }) => (
                 <FormItem className="mt-2 mr-2 flex w-full gap-2">
                   <Select
-                    disabled={isLoggedIn}
+                    disabled={isLoggedIn && !!field.value}
                     value={field.value}
                     onValueChange={(value: string) => {
                       field.onChange(value);
@@ -318,7 +323,7 @@ const SignupForm = (props: {
                     aria-describedby="phone-message"
                     data-field-id="phone_number"
                     defaultCountry="IN"
-                    disabled={isLoggedIn}
+                    disabled={isLoggedIn && !!field.value}
                     {...field}
                   />
                 </FormControl>

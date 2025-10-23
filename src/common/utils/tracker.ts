@@ -21,6 +21,7 @@ export type FormSubmitStatusAttributes = CustomAttributes & {
 
 export const GTMEventType = {
   PAGE_VIEW: "we_page_load",
+  SECTION_VIEW: "gtm_section_view",
   CLICK: "gtm_custom_click",
   HOVER: "hover",
   FORM_SUBMIT_STATUS: "form_submit_status",
@@ -218,6 +219,10 @@ class Tracker {
       `"${payload.event}" event has been received with below payload: `,
       payload
     );
+  }
+
+  sectionView(attributes: CustomAttributes): void {
+    this._trackEvent(GTMEventType.SECTION_VIEW, attributes);
   }
 
   _trackEvent(

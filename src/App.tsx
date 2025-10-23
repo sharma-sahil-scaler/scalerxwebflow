@@ -17,6 +17,15 @@ function App() {
         Sign Up
       </button>
 
+      <section
+        className="gtm-track-element hero-section"
+        data-gtm-category="section"
+        data-gtm-section-name="hero-section"
+      >
+        <h1>Welcome to Scaler</h1>
+        <p>Your content here...</p>
+      </section>
+
       <ShadowDom>
         <InitialLoad product="product" subProduct="subProduct" />
         <DefaultForm
