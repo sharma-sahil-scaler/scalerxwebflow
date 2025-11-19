@@ -5,8 +5,8 @@ import { props } from "@webflow/data-types";
 import "@/global.css";
 
 const SignupFormComponent = declareComponent(DefaultForm, {
-  name: "DefaultForm",
-  description: "DefaultForm component",
+  name: "CoursePageForm",
+  description: "CoursePageForm component",
   group: "General",
   props: {
     form_subtitle: props.Text({

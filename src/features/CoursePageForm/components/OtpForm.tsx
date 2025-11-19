@@ -91,7 +91,7 @@ const OtpForm = (props: {
         setSubmitting(false);
       }
     },
-    [intent, email, phoneNumber, trackClick, trackError]
+    [phoneNumber, trackClick, intent, email, program, trackError]
   );
 
   return (
@@ -101,7 +101,7 @@ const OtpForm = (props: {
         onSubmit={form.handleSubmit(handleSubmit)}
       >
         <Flex
-          className="gap max-h-[20rem] overflow-y-auto"
+          className="gap max-h-[20rem] overflow-y-auto px-4 pb-6 sm:px-6"
           direction="col"
           gap="md"
         >
