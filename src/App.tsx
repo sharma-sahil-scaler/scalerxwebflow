@@ -1,5 +1,5 @@
 import ToastHost from "@/common/components/ui/shadow-toast";
-import DefaultForm from "@/features/DefaultForm/DefaultForm";
+import DefaultForm from "@/features/CoursePageForm/CoursePageForm";
 import { ShadowDom } from "@/common/components/others/shadow-dom";
 import InitialLoad from "@/features/InitialLoad/InitialLoad";
 

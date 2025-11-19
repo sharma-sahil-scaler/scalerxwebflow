@@ -1,5 +1,5 @@
 import { declareComponent } from "@webflow/react";
-import DefaultForm from "./DefaultForm";
+import DefaultForm from "./CoursePageForm";
 import { props } from "@webflow/data-types";
 
 import "@/global.css";
@@ -25,22 +25,16 @@ const SignupFormComponent = declareComponent(DefaultForm, {
       name: "Otp Intent",
       defaultValue: "",
     }),
-    product: props.Text({
-      name: "Product",
-      defaultValue: "",
-    }),
-    sub_product: props.Text({
-      name: "Sub Product",
-      defaultValue: "",
-    }),
-    platform: props.Text({
-      name: "Platform",
-      defaultValue: "",
-    }),
     form_title: props.Text({
       name: "Form Title",
       defaultValue: "Talk To a Scaler Career Counsellor",
     }),
+    program: props.Variant({
+      name: "Page Program",
+      group: "Property",
+      options: ["academy", "data_science", "devops", "ai_ml"],
+      defaultValue: "academy"
+    })
   },
   options: {
     ssr: false,

@@ -23,8 +23,8 @@ import { useTracking } from "@/common/hooks/useTracking";
 import { $initialData } from "@/common/stores/initial-data";
 import { toast } from "@/common/stores/toast";
 import { ApiError } from "@/common/utils/api";
-import { createUser, requestCallback, updateUser } from "@/features/DefaultForm/api";
-import { defaultFormStore } from "@/features/DefaultForm/store";
+import { createUser, requestCallback, updateUser } from "@/features/CoursePageForm/api";
+import { defaultFormStore } from "@/features/CoursePageForm/store";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useStore } from "@nanostores/react";
@@ -63,6 +63,7 @@ const formSchema = z.object({
 const SignupForm = (props: {
   intent: string;
   siteKey: string;
+  program: string
 }) => {
   const { intent, siteKey } = props;
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -142,16 +143,16 @@ const SignupForm = (props: {
           await createUser(basePayload);
         }
 
-        toast.show({ title: "Signup successful", variant: "success" });
-        trackFormSubmitStatus("signup_form_success");
-        trackClick({ click_source: "form_first", click_type: "requested_otp" });
-
         if (isPhoneVerified && isLoggedIn) {
           defaultFormStore.set({
             step: "success",
           });
           return;
         };
+
+        toast.show({ title: "Signup successful", variant: "success" });
+        trackFormSubmitStatus("signup_form_success");
+        trackClick({ click_source: "form_first", click_type: "requested_otp" });
         defaultFormStore.set({
           step: "otp",
           email: data.email,
@@ -203,11 +204,11 @@ const SignupForm = (props: {
   return (
     <Form {...form}>
       <form
-        className="flex h-full flex-col justify-between"
+        className="h-full justify-between flex flex-col"
         onSubmit={form.handleSubmit(handleSubmit)}
       >
         <div
-          className={cn("flex flex-col gap-2", "no-scrollbar overflow-y-auto")}
+          className={cn("flex flex-col gap-2 px-4 pb-6 sm:px-6", "no-scrollbar overflow-y-auto")}
         >
           <FormField
             name="email"
@@ -375,8 +376,8 @@ const SignupForm = (props: {
               siteKey={siteKey}
             />
           )}
-          <FooterBtn currentStep="personal-detail" isDisabled={isSubmitting} />
         </div>
+        <FooterBtn currentStep="personal-detail" isDisabled={isSubmitting} />
       </form>
     </Form>
   );

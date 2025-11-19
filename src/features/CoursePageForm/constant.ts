@@ -40,3 +40,17 @@ export const JOB_TITLE_OPTIONS = [
   { label: "Product Designer", value: "Product Designer" },
   { label: "Other", value: "Other" },
 ]
+
+export const GET_LIVE_CLASS_ENDPOINT = '/api/v4/event_groups';
+export const PROGRAM_TO_SLUG = {
+  academy: 'free-class-with-founders-academy',
+  'data-science': 'free-class-with-founders-dsml',
+  devops: 'free-class-with-founders-academy',
+  'ai-ml': 'free-class-with-founders-dsml',
+};
+export const PROGRAM_MAPPING = {
+  academy: 'software_development',
+  'data-science': 'data_science',
+  devops: 'devops',
+  'ai-ml': 'ai_ml',
+};

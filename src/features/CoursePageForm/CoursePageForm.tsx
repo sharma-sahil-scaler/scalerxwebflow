@@ -17,24 +17,21 @@ type DefaultFormProps = {
   form_subtitle: string;
   signup_intent: string;
   otp_intent: string;
-  product: string;
-  sub_product: string;
-  platform: string;
   form_title: string;
   turnstile_key: string;
+  program: string
 };
 
 const FormStep = ({
   signupIntent,
   otpIntent,
   siteKey,
+  program
 }: {
   signupIntent: string;
   otpIntent: string;
-  product: string;
-  subProduct: string;
-  platform: string;
   siteKey: string;
+  program: string
 }) => {
   const { step } = useStore(defaultFormStore);
 
@@ -43,13 +40,14 @@ const FormStep = ({
       return (
         <SignupForm
           intent={signupIntent}
-          {...{ siteKey }}
+          {...{ siteKey, program }}
         />
       );
     case "otp":
       return (
         <OtpStep
           intent={otpIntent}
+          {...{ program }}
         />
       );
     case "success":
@@ -59,16 +57,14 @@ const FormStep = ({
   }
 };
 
-const DefaultForm = (props: DefaultFormProps) => {
+const CoursePageForm = (props: DefaultFormProps) => {
   const {
     form_subtitle: formSubtitle,
     signup_intent: signupIntent,
     otp_intent: otpIntent,
-    product: product,
-    sub_product: subProduct,
-    platform: platform,
     form_title: formTitle,
     turnstile_key: siteKey,
+    program
   } = props;
 
   const initialStore = useStore($initialData);
@@ -98,15 +94,13 @@ const DefaultForm = (props: DefaultFormProps) => {
               {formSubtitle}
             </CardDescription>
           </CardHeader>
-          <CardContent className="flex flex-auto flex-col">
+          <CardContent className="flex flex-auto flex-col px-0">
             <FormStep
               {...{
                 signupIntent,
                 otpIntent,
-                product,
-                subProduct,
-                platform,
                 siteKey,
+                program
               }}
             />
           </CardContent>
@@ -116,4 +110,4 @@ const DefaultForm = (props: DefaultFormProps) => {
   }
 };
 
-export default DefaultForm;
+export default CoursePageForm;

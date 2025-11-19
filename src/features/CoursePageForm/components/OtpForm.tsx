@@ -3,8 +3,8 @@ import { z } from "zod";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { defaultFormStore } from "@/features/DefaultForm/store";
-import { verifyUser } from "@/features/DefaultForm/api";
+import { defaultFormStore } from "@/features/CoursePageForm/store";
+import { bookLiveClass, verifyUser } from "@/features/CoursePageForm/api";
 import { parsePhoneNumber } from "libphonenumber-js";
 import {
   Form,
@@ -36,7 +36,7 @@ const OtpForm = (props: {
   intent: string;
 }) => {
   const { intent } = props;
-  const { email, phoneNumber } = useStore(defaultFormStore);
+  const { email, phoneNumber, program = 'academy' } = useStore(defaultFormStore);
   const [submitting, setSubmitting] = useState(false);
   const form = useForm<z.infer<typeof otpSchema>>({
     resolver: zodResolver(otpSchema),
@@ -61,6 +61,8 @@ const OtpForm = (props: {
             otp: data.otp,
           },
         });
+
+        await bookLiveClass({ program })
         toast.show({
           title: "OTP verification successful",
           variant: "success",
