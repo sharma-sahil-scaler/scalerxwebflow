@@ -18,7 +18,7 @@ export const FooterBtn = ({
   return (
     <Flex align="center" direction="col" gap="md" justify="end">
       <Separator className="mb-0" />
-      <Flex className="w-full" align="center" direction="col" gap="sm">
+      <Flex className="w-full px-4 pb-6 sm:px-6" align="center" direction="col" gap="sm">
         <Button
           id="form-footer-btn"
           size="lg"

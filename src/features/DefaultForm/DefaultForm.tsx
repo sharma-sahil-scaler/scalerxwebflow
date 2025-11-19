@@ -76,9 +76,9 @@ const DefaultForm = (props: DefaultFormProps) => {
 
   if (loading) {
     return (
-      <div className="flex h-full w-full items-center justify-center px-4">
+      <div className="flex h-full w-full items-center justify-center">
         <Card
-          className="no-scrollbar h-full w-full gap-2 overflow-y-scroll items-center justify-center bg-[#fafbfc] py-4 sm:aspect-[430/420] sm:max-h-[80vh] sm:w-[30rem] sm:max-w-[50rem]"
+          className="no-scrollbar h-full w-full gap-2 overflow-y-scroll items-center justify-center bg-[#fafbfc] py-4 "
           aria-label="Test Issuance Form"
         >
           <Spinner className="size-12" />
@@ -87,9 +87,9 @@ const DefaultForm = (props: DefaultFormProps) => {
     );
   } else {
     return (
-      <div className="flex h-full items-center justify-center px-4">
+      <div className="flex h-full items-center justify-center">
         <Card
-          className="no-scrollbar h-full w-full gap-2 overflow-y-scroll bg-[#fafbfc] py-4 sm:aspect-[430/420] sm:max-h-[80vh] sm:w-[30rem] sm:max-w-[50rem]"
+          className="no-scrollbar h-full w-full gap-2 overflow-y-scroll bg-[#fafbfc] py-4 "
           aria-label="Test Issuance Form"
         >
           <CardHeader className="px-4 md:px-6">
@@ -98,7 +98,7 @@ const DefaultForm = (props: DefaultFormProps) => {
               {formSubtitle}
             </CardDescription>
           </CardHeader>
-          <CardContent className="flex flex-auto flex-col px-4 pb-6 sm:px-6">
+          <CardContent className="flex flex-auto flex-col">
             <FormStep
               {...{
                 signupIntent,
