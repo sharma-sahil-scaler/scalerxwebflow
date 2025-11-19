@@ -26,20 +26,16 @@ import { ApiError } from "@/common/utils/api";
 import { FooterBtn } from "./FooterBtn";
 import { VERIFY_OTP_ERROR_MAP } from "../constant";
 import { useTracking } from "@/common/hooks/useTracking";
+import attribution from "@/common/utils/attribution";
 
 const otpSchema = z.object({
   otp: z.string().min(4, { message: "Enter OTP" }),
 });
 
 const OtpForm = (props: {
-  attributions?: {
-    intent: string;
-    platform: string;
-    product: string;
-    sub_product: string;
-  };
+  intent: string;
 }) => {
-  const { attributions } = props;
+  const { intent } = props;
   const { email, phoneNumber } = useStore(defaultFormStore);
   const [submitting, setSubmitting] = useState(false);
   const form = useForm<z.infer<typeof otpSchema>>({
@@ -55,8 +51,9 @@ const OtpForm = (props: {
 
         trackClick({ click_source: "otp_form", click_type: "otp_submit" });
         setSubmitting(true);
+        attribution.setAttribution(intent);
         await verifyUser({
-          attributions,
+          attributions: attribution.getAttribution(),
           user: {
             email: email || "",
             phone_number: formattedNumber || "",
@@ -92,7 +89,7 @@ const OtpForm = (props: {
         setSubmitting(false);
       }
     },
-    [attributions, email, phoneNumber, trackClick, trackError]
+    [intent, email, phoneNumber, trackClick, trackError]
   );
 
   return (

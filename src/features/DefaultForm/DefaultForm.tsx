@@ -27,9 +27,6 @@ type DefaultFormProps = {
 const FormStep = ({
   signupIntent,
   otpIntent,
-  product,
-  subProduct,
-  platform,
   siteKey,
 }: {
   signupIntent: string;
@@ -45,24 +42,14 @@ const FormStep = ({
     case "signup":
       return (
         <SignupForm
-          attributions={{
-            intent: signupIntent,
-            product,
-            sub_product: subProduct,
-            platform,
-          }}
+          intent={signupIntent}
           {...{ siteKey }}
         />
       );
     case "otp":
       return (
         <OtpStep
-          attributions={{
-            intent: otpIntent,
-            product,
-            sub_product: subProduct,
-            platform,
-          }}
+          intent={otpIntent}
         />
       );
     case "success":

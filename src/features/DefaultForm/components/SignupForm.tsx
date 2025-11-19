@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/common/components/ui/select";
+import attribution from "@/common/utils/attribution";
 import { useTracking } from "@/common/hooks/useTracking";
 import { $initialData } from "@/common/stores/initial-data";
 import { toast } from "@/common/stores/toast";
@@ -60,15 +61,10 @@ const formSchema = z.object({
 });
 
 const SignupForm = (props: {
-  attributions?: {
-    intent: string;
-    platform: string;
-    product: string;
-    sub_product: string;
-  };
+  intent: string;
   siteKey: string;
 }) => {
-  const { attributions, siteKey } = props;
+  const { intent, siteKey } = props;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -115,10 +111,12 @@ const SignupForm = (props: {
 
         const toWhatsappConsent = (consent: boolean) =>
           consent ? "whatsapp_consent_yes" : "whatsapp_consent_no";
+        
+        attribution.setAttribution(intent);
 
         const basePayload = {
           account_type: "academy",
-          attributions,
+          attributions: attribution.getAttribution(),
           type: "marketing",
           "cf-turnstile-response": token,
           user: {
@@ -132,7 +130,7 @@ const SignupForm = (props: {
 
         if (isPhoneVerified && isLoggedIn) {
           await requestCallback({
-            attributions,
+            attributions: attribution.getAttribution(),
             user: {
               program: "Online Mba",
               position: data.position,
@@ -179,7 +177,7 @@ const SignupForm = (props: {
       }
     },
     [
-      attributions,
+      intent,
       isLoggedIn,
       isPhoneVerified,
       token,

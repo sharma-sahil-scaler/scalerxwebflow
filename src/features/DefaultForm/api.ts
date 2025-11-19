@@ -24,7 +24,9 @@ interface CreateRegistrationPayload {
 interface VerifyOtpPayload {
   attributions?: {
     intent: string;
-    sub_product: string;
+    element?: string;
+    product?: string;
+    sub_product?: string;
   };
   user: {
     otp: string;
@@ -37,7 +39,9 @@ interface VerifyOtpPayload {
 interface RequestCallbackPayload {
   attributions?: {
     intent: string;
-    sub_product: string;
+    element?: string;
+    product?: string;
+    sub_product?: string;
   };
   user: {
     program: string;
