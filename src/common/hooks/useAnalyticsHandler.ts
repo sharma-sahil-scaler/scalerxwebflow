@@ -78,6 +78,8 @@ export const useAnalyticsHandler = () => {
     (element: Element) => {
       const attributes = extractAttributes(element);
 
+      console.log("Attributes", attributes)
+
       tracker.click({
         click_type:
           attributes.click_type || "button_click",
@@ -168,6 +170,9 @@ export const useAnalyticsHandler = () => {
   useEffect(() => {
     const viewedSections = viewedSectionsRef.current;
     const { buttons, sections } = categorizeElements();
+
+    console.log('Buttons', buttons)
+    console.log('Sections', sections)
 
     const clickHandlers = setupButtonTracking(buttons);
     const observer = setupSectionTracking(sections);
