@@ -74,7 +74,7 @@ const CoursePageForm = (props: DefaultFormProps) => {
     return (
       <div className="flex h-full w-full items-center justify-center">
         <Card
-          className="no-scrollbar h-full w-full gap-2 overflow-y-scroll items-center justify-center bg-[#fafbfc] py-4 "
+          className="h-full w-full gap-2 items-center justify-center bg-[#fafbfc] py-4 "
           aria-label="Test Issuance Form"
         >
           <Spinner className="size-12" />
@@ -85,7 +85,7 @@ const CoursePageForm = (props: DefaultFormProps) => {
     return (
       <div className="flex h-full items-center justify-center">
         <Card
-          className="no-scrollbar h-full w-full gap-2 overflow-y-scroll bg-[#fafbfc] py-4 "
+          className="h-full w-full gap-2 bg-[#fafbfc] py-4 "
           aria-label="Test Issuance Form"
         >
           <CardHeader className="px-4 md:px-6">
