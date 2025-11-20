@@ -85,7 +85,7 @@ const CoursePageForm = (props: DefaultFormProps) => {
     return (
       <div className="flex h-full items-center justify-center">
         <Card
-          className="h-full w-full gap-2 bg-[#fafbfc] py-4 "
+          className="h-full w-full gap-2 bg-[#fafbfc] py-4 border-hidden"
           aria-label="Test Issuance Form"
         >
           <CardHeader className="px-4 md:px-6">
