@@ -1,5 +1,4 @@
 import ShadowTurnstile from "@/common/components/integrations/shadow-turnstile";
-import { Flex } from "@/common/components/layout/flex";
 import { Checkbox } from "@/common/components/ui/checkbox";
 import {
   Form,
@@ -37,7 +36,6 @@ import { CREATE_REGISTRATION_ERROR_MAP, JOB_TITLE_OPTIONS } from "../constant";
 import { FooterBtn } from "./FooterBtn";
 
 type UserProfile = {
-  name?: string;
   email?: string;
   phone_number?: string;
   orgyear?: string | number;
@@ -46,9 +44,6 @@ type UserProfile = {
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
-  name: z
-    .string()
-    .min(2, { message: "Name must be at least 2 characters long" }),
   orgyear: z.string().min(4, { message: "Graduation year is required" }),
   phone_number: z
     .string()
@@ -70,7 +65,6 @@ const SignupForm = (props: {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
       email: "",
       phone_number: "",
       orgyear: "",
@@ -192,7 +186,6 @@ const SignupForm = (props: {
     if (userData) {
       form.reset({
         email: userData.email || "",
-        name: userData.name || "",
         phone_number: (userData.phone_number || "").replace("-", ""),
         orgyear: (userData.orgyear || "").toString(),
         position: "",
@@ -208,7 +201,7 @@ const SignupForm = (props: {
         onSubmit={form.handleSubmit(handleSubmit)}
       >
         <div
-          className={cn("flex flex-col gap-2 px-4 pb-6 sm:px-6", "no-scrollbar overflow-y-auto")}
+          className={cn("flex flex-col gap-2 px-4 pb-6 sm:px-6")}
         >
           <FormField
             name="email"
@@ -230,26 +223,6 @@ const SignupForm = (props: {
               </FormItem>
             )}
           />
-          <Flex>
-            <FormField
-              name="name"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem className="mt-2 mr-2 flex w-full flex-col gap-2">
-                  <FormControl>
-                    <Input
-                      className="h-10 sm:h-12"
-                      placeholder="Name"
-                      aria-describedby="name-message"
-                      data-field-id="name"
-                      disabled={isLoggedIn && !!field.value}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage id="name-message" />
-                </FormItem>
-              )}
-            />
             <FormField
               name="orgyear"
               control={form.control}
@@ -279,7 +252,6 @@ const SignupForm = (props: {
                 </FormItem>
               )}
             />
-          </Flex>
 
           <FormField
             name="position"
@@ -350,7 +322,15 @@ const SignupForm = (props: {
               </FormItem>
             )}
           />
-          <div className="-mt-2 text-[0.65rem] whitespace-nowrap sm:text-sm">
+          {mode === "publish" && (
+            <ShadowTurnstile
+              onTokenObtained={handleTokenObtained}
+              siteKey={siteKey}
+            />
+          )}
+        </div>
+        <FooterBtn currentStep="personal-detail" isDisabled={isSubmitting} buttonWrapperClass="!px-2 pb-4 sm:px-4" />
+        <div className="-mt-2 text-[0.65rem] whitespace-nowrap sm:text-sm self-center">
             By continuing you agree to &nbsp;
             <a
               className="text-blue-600 hover:underline"
@@ -370,14 +350,6 @@ const SignupForm = (props: {
               Privacy Policy
             </a>
           </div>
-          {mode === "publish" && (
-            <ShadowTurnstile
-              onTokenObtained={handleTokenObtained}
-              siteKey={siteKey}
-            />
-          )}
-        </div>
-        <FooterBtn currentStep="personal-detail" isDisabled={isSubmitting} />
       </form>
     </Form>
   );

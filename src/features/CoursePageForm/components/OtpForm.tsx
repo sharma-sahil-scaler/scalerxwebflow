@@ -101,7 +101,7 @@ const OtpForm = (props: {
         onSubmit={form.handleSubmit(handleSubmit)}
       >
         <Flex
-          className="gap max-h-[20rem] overflow-y-auto px-4 pb-6 sm:px-6"
+          className="gap px-4 pb-6 sm:px-6"
           direction="col"
           gap="md"
         >
