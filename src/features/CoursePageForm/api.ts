@@ -5,12 +5,6 @@ import attribution from "@/common/utils/attribution";
 
 interface CreateRegistrationPayload {
   account_type: string;
-  attributions?: {
-    intent: string;
-    element?: string;
-    product?: string;
-    sub_product?: string;
-  };
   type: string;
   user: {
     country_code: string;
@@ -25,17 +19,14 @@ interface CreateRegistrationPayload {
 }
 
 interface VerifyOtpPayload {
-  attributions?: {
-    intent: string;
-    element?: string;
-    product?: string;
-    sub_product?: string;
-  };
+  type: string;
+  source: string;
   user: {
     otp: string;
     phone_number: string;
     email?: string;
     skip_existing_user_check?: boolean;
+    rcb_prams?: unknown
   };
 }
 

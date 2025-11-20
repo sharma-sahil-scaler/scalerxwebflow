@@ -60,7 +60,7 @@ const SignupForm = (props: {
   siteKey: string;
   program: string
 }) => {
-  const { intent, siteKey } = props;
+  const { siteKey } = props;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -107,13 +107,11 @@ const SignupForm = (props: {
         const toWhatsappConsent = (consent: boolean) =>
           consent ? "whatsapp_consent_yes" : "whatsapp_consent_no";
         
-        attribution.setAttribution(intent);
-
         const basePayload = {
           account_type: "academy",
-          attributions: attribution.getAttribution(),
           type: "marketing",
           "cf-turnstile-response": token,
+          source: "Course Page",
           user: {
             ...data,
             country_code: countryCode,
@@ -171,15 +169,7 @@ const SignupForm = (props: {
         setIsSubmitting(false);
       }
     },
-    [
-      intent,
-      isLoggedIn,
-      isPhoneVerified,
-      token,
-      trackClick,
-      trackError,
-      trackFormSubmitStatus,
-    ]
+    [isLoggedIn, isPhoneVerified, token, trackClick, trackError, trackFormSubmitStatus]
   );
 
   useEffect(() => {
@@ -223,35 +213,35 @@ const SignupForm = (props: {
               </FormItem>
             )}
           />
-            <FormField
-              name="orgyear"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem className="mt-2 mr-2 flex w-full gap-2">
-                  <Select
-                    disabled={isLoggedIn && !!field.value}
-                    value={field.value}
-                    onValueChange={(value: string) => {
-                      field.onChange(value);
-                    }}
-                  >
-                    <FormControl className="!h-10 w-full text-base sm:!h-12">
-                      <SelectTrigger>
-                        <SelectValue placeholder="Graduation year" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent className="h-58 w-full">
-                      {graduationYears.map((year) => (
-                        <SelectItem key={year} value={year}>
-                          {year}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <FormField
+            name="orgyear"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem className="mt-2 mr-2 flex w-full gap-2">
+                <Select
+                  disabled={isLoggedIn && !!field.value}
+                  value={field.value}
+                  onValueChange={(value: string) => {
+                    field.onChange(value);
+                  }}
+                >
+                  <FormControl className="!h-10 w-full text-base sm:!h-12">
+                    <SelectTrigger>
+                      <SelectValue placeholder="Graduation year" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent className="h-58 w-full">
+                    {graduationYears.map((year) => (
+                      <SelectItem key={year} value={year}>
+                        {year}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <FormField
             name="position"

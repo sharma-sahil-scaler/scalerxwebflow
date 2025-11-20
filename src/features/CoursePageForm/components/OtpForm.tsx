@@ -34,6 +34,7 @@ const otpSchema = z.object({
 
 const OtpForm = (props: {
   intent: string;
+  program: string;
 }) => {
   const { intent } = props;
   const { email, phoneNumber, program = 'academy' } = useStore(defaultFormStore);
@@ -51,14 +52,20 @@ const OtpForm = (props: {
 
         trackClick({ click_source: "otp_form", click_type: "otp_submit" });
         setSubmitting(true);
-        attribution.setAttribution(intent);
+        attribution.setAttribution(intent, {
+          program
+        });
         await verifyUser({
-          attributions: attribution.getAttribution(),
+          source: "Course Page",
+          type: "course_landing",
           user: {
             email: email || "",
             phone_number: formattedNumber || "",
             skip_existing_user_check: true,
             otp: data.otp,
+            rcb_prams: {
+              attributions: attribution.getAttribution()
+            }
           },
         });
 
