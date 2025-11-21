@@ -127,17 +127,19 @@ export const useAnalyticsHandler = () => {
     return { buttons, sections };
   }, []);
 
-  const setupButtonTracking = useCallback(
-    (buttons: Element[]) => {
-      const clickHandlers = new Map<Element, EventListener>();
+  const setupButtonTracking = useCallback(() => {
+      const clickHandler = (event: Event) => {
+        const target = event.target as HTMLElement;
 
-      buttons.forEach((button) => {
-        const clickHandler = () => trackButtonClick(button);
-        button.addEventListener("click", clickHandler);
-        clickHandlers.set(button, clickHandler);
-      });
+        if (target.classList.contains('gtm-track-element') 
+          && target.dataset.gtmCategory === 'button') {
+          trackButtonClick(target);
+        }
+      };
 
-      return clickHandlers;
+      document.addEventListener("click", clickHandler);
+
+      return clickHandler;
     },
     [trackButtonClick]
   );
@@ -169,19 +171,13 @@ export const useAnalyticsHandler = () => {
 
   useEffect(() => {
     const viewedSections = viewedSectionsRef.current;
-    const { buttons, sections } = categorizeElements();
+    const { sections } = categorizeElements();
 
-    console.log('Buttons', buttons)
-    console.log('Sections', sections)
-
-    const clickHandlers = setupButtonTracking(buttons);
+    const clickHandler = setupButtonTracking();
     const observer = setupSectionTracking(sections);
 
     return () => {
-      clickHandlers.forEach((handler, button) => {
-        button.removeEventListener("click", handler);
-      });
-      clickHandlers.clear();
+      document.removeEventListener("click", clickHandler);
       observer.disconnect();
       viewedSections.clear();
     };

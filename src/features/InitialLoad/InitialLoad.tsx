@@ -10,6 +10,7 @@ import ToastHost from "@/common/components/ui/shadow-toast";
 import tracker from "@/common/utils/tracker";
 import { getURLWithUTMParams } from "@/common/utils/url";
 import { useAnalyticsHandler } from "@/common/hooks/useAnalyticsHandler";
+import { useFormTriggerListener } from "@/common/hooks/useFormTrigger";
 import attribution from "@/common/utils/attribution";
 
 const InitialLoad = ({
@@ -23,6 +24,7 @@ const InitialLoad = ({
   const { isLoggedIn } = data ?? {};
 
   useAnalyticsHandler();
+  useFormTriggerListener();
 
   useEffect(() => {
     initializeUtmPropagation();

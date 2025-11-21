@@ -34,6 +34,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { CREATE_REGISTRATION_ERROR_MAP, JOB_TITLE_OPTIONS } from "../constant";
 import { FooterBtn } from "./FooterBtn";
+import { $formTrigger } from "@/common/hooks/useFormTrigger";
 
 type UserProfile = {
   email?: string;
@@ -59,6 +60,7 @@ const SignupForm = (props: {
   intent: string;
   siteKey: string;
   program: string
+  formIp: string
 }) => {
   const { siteKey } = props;
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -72,6 +74,7 @@ const SignupForm = (props: {
       whatsapp_consent: false,
     },
   });
+  const { clickSource, clickSection } = useStore($formTrigger);
   const { trackClick, trackFormSubmitStatus, trackError } = useTracking();
   const currentYear = new Date().getFullYear();
   const initialData = useStore($initialData);
@@ -144,7 +147,12 @@ const SignupForm = (props: {
         toast.show({ title: "Signup successful", variant: "success" });
         trackFormSubmitStatus("signup_form_success");
         trackClick({ click_source: "form_first", click_type: "requested_otp" });
-        trackClick({ click_type: "lead_gen_request" })
+        trackClick(
+          { click_type: "lead_gen_request", custom: {
+            source: clickSource,
+            section: clickSection
+          }}
+        )
         defaultFormStore.set({
           step: "otp",
           email: data.email,
@@ -192,7 +200,9 @@ const SignupForm = (props: {
       >
         <div
           className={cn("flex flex-col gap-2 px-4 pb-6 sm:px-6")}
-        >
+        > 
+          <input type="hidden" id="form_source" name="Form Source" />
+          <input type="hidden" id="form_section" name="Form Section" />
           <FormField
             name="email"
             control={form.control}

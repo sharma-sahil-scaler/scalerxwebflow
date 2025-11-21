@@ -5,6 +5,8 @@ export interface DefaultFormStore {
   email?: string;
   phoneNumber?: string;
   program?: string;
+  formSource?: string;
+  formSection?: string;
 }
 
 export const defaultFormStore = map<DefaultFormStore>({
