@@ -144,6 +144,9 @@ const SignupForm = (props: {
           });
           return;
         };
+
+        console.log('customSource', clickSource)
+        console.log('clickSection', clickSection)
         toast.show({ title: "Signup successful", variant: "success" });
         trackFormSubmitStatus("signup_form_success");
         trackClick({ click_source: "form_first", click_type: "requested_otp" });
