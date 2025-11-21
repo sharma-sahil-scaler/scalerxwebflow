@@ -75,6 +75,7 @@ const OtpForm = (props: {
           variant: "success",
         });
         trackClick({ click_source: "otp_form", click_type: "otp_verified" });
+        trackClick({ click_type: "lead_gen" })
         defaultFormStore.set({ step: "success" });
       } catch (error: unknown) {
         if (error instanceof ApiError) {

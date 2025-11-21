@@ -22,9 +22,6 @@ const InitialLoad = ({
   const { data, error } = useStore($initialData);
   const { isLoggedIn } = data ?? {};
 
-  console.log("product", product)
-  console.log("subProduct", subProduct)
-
   useAnalyticsHandler();
 
   useEffect(() => {

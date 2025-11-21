@@ -141,10 +141,10 @@ const SignupForm = (props: {
           });
           return;
         };
-
         toast.show({ title: "Signup successful", variant: "success" });
         trackFormSubmitStatus("signup_form_success");
         trackClick({ click_source: "form_first", click_type: "requested_otp" });
+        trackClick({ click_type: "lead_gen_request" })
         defaultFormStore.set({
           step: "otp",
           email: data.email,
