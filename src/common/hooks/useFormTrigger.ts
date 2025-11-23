@@ -4,7 +4,8 @@ import { map } from "nanostores";
 export interface FormTriggerData {
   clickSource?: string;
   clickSection?: string;
-  intent?: string;
+  otpIntent?: string;
+  signupIntent?: string;
 }
 
 export const $formTrigger = map<FormTriggerData>({});
@@ -39,7 +40,8 @@ export const useFormTriggerListener = () => {
       $formTrigger.set({
         clickSource: trigger.dataset.clickSource,
         clickSection: trigger.dataset.clickSection,
-        intent: trigger.dataset.intent,
+        otpIntent: trigger.dataset.otpIntent,
+        signupIntent: trigger.dataset.signupIntent
       });
     };
 

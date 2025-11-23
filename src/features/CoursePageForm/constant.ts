@@ -4,6 +4,7 @@ export const CREATE_REGISTRATION_ERROR_MAP: Record<string, string> = {
   "406": "Recaptcha validity has expired, please try refreshing the page",
   "409": "Phone number is linked to a different email",
   "422": "Please fill the required fields",
+  "429": "Requested too many times",
   "default": "Something went wrong",
 };
 

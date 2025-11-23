@@ -41,7 +41,7 @@ const OtpForm = (props: { intent: string; program: string }) => {
     program = "academy",
   } = useStore(defaultFormStore);
   const [submitting, setSubmitting] = useState(false);
-  const { clickSource, clickSection } = useStore($formTrigger);
+  const { clickSource, clickSection, otpIntent } = useStore($formTrigger);
   const form = useForm<z.infer<typeof otpSchema>>({
     resolver: zodResolver(otpSchema),
   });
@@ -50,12 +50,13 @@ const OtpForm = (props: { intent: string; program: string }) => {
   const handleSubmit = useCallback(
     async (data: z.infer<typeof otpSchema>) => {
       try {
+        const formIntent = intent || otpIntent || "rcb_form";
         const parsedPhone = parsePhoneNumber(phoneNumber || "");
         const formattedNumber = `+${parsedPhone.countryCallingCode}-${parsedPhone.nationalNumber}`;
 
         trackClick({ click_source: "otp_form", click_type: "otp_submit" });
         setSubmitting(true);
-        attribution.setAttribution(intent, {
+        attribution.setAttribution(formIntent, {
           program,
         });
         await verifyUser({
@@ -109,7 +110,7 @@ const OtpForm = (props: { intent: string; program: string }) => {
             ip: "rcb",
             source: clickSource,
             section: clickSection,
-            message: errorMessage
+            message: errorMessage,
           },
         });
       } finally {
