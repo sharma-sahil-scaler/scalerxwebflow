@@ -45,7 +45,7 @@ function ToastItem({ toast }: { toast: Toast }) {
 export default function ShadowToast() {
   const toasts = useStore($toasts);
   return (
-    <div className="fixed top-0 right-0 z-[100] flex max-h-screen w-full max-w-sm flex-col gap-2 p-4 sm:top-4 sm:right-4">
+    <div className="fixed top-0 right-0 z-[10000] flex max-h-screen w-full max-w-sm flex-col gap-2 p-4 sm:top-4 sm:right-4">
       {toasts.map((t) => (
         <ToastItem key={t.id} toast={t} />
       ))}
