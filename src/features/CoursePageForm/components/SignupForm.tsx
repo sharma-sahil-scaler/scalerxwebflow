@@ -180,7 +180,15 @@ const SignupForm = (props: {
         setIsSubmitting(false);
       }
     },
-    [clickSection, clickSource, isLoggedIn, isPhoneVerified, token, trackClick, trackError, trackFormSubmitStatus]
+    [ clickSection, 
+      clickSource, 
+      isLoggedIn, 
+      isPhoneVerified, 
+      token, 
+      trackClick, 
+      trackError, 
+      trackFormSubmitStatus
+    ]
   );
 
   useEffect(() => {

@@ -4,6 +4,7 @@ import { map } from "nanostores";
 export interface FormTriggerData {
   clickSource?: string;
   clickSection?: string;
+  intent?: string;
 }
 
 export const $formTrigger = map<FormTriggerData>({});
@@ -34,9 +35,11 @@ export const useFormTriggerListener = () => {
       const target = event.target as HTMLElement;
 
       if (target.classList.contains("form-trigger")) {
+        console.log("Form trigger clicked", target.dataset);
         $formTrigger.set({
           clickSource: target.dataset.clickSource,
           clickSection: target.dataset.clickSection,
+          intent: target.dataset.intent,
         });
       }
     };
