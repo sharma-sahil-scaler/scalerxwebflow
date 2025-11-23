@@ -36,8 +36,6 @@ export const useFormTriggerListener = () => {
       const trigger = target.closest(".form-trigger") as HTMLElement | null;
       if (!trigger) return;
 
-      console.log("Form trigger clicked", trigger, trigger.dataset);
-
       $formTrigger.set({
         clickSource: trigger.dataset.clickSource,
         clickSection: trigger.dataset.clickSection,

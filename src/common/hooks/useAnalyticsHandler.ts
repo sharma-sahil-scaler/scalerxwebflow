@@ -77,9 +77,6 @@ export const useAnalyticsHandler = () => {
   const trackButtonClick = useCallback(
     (element: Element) => {
       const attributes = extractAttributes(element);
-
-      console.log("Attributes", attributes)
-
       tracker.click({
         click_type:
           attributes.click_type || "button_click",

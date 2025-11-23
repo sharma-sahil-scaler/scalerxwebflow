@@ -27,22 +27,25 @@ import { FooterBtn } from "./FooterBtn";
 import { VERIFY_OTP_ERROR_MAP } from "../constant";
 import { useTracking } from "@/common/hooks/useTracking";
 import attribution from "@/common/utils/attribution";
+import { $formTrigger } from "@/common/hooks/useFormTrigger";
 
 const otpSchema = z.object({
   otp: z.string().min(4, { message: "Enter OTP" }),
 });
 
-const OtpForm = (props: {
-  intent: string;
-  program: string;
-}) => {
+const OtpForm = (props: { intent: string; program: string }) => {
   const { intent } = props;
-  const { email, phoneNumber, program = 'academy' } = useStore(defaultFormStore);
+  const {
+    email,
+    phoneNumber,
+    program = "academy",
+  } = useStore(defaultFormStore);
   const [submitting, setSubmitting] = useState(false);
+  const { clickSource, clickSection } = useStore($formTrigger);
   const form = useForm<z.infer<typeof otpSchema>>({
     resolver: zodResolver(otpSchema),
   });
-  const { trackError, trackClick } = useTracking();
+  const { trackClick } = useTracking();
 
   const handleSubmit = useCallback(
     async (data: z.infer<typeof otpSchema>) => {
@@ -53,7 +56,7 @@ const OtpForm = (props: {
         trackClick({ click_source: "otp_form", click_type: "otp_submit" });
         setSubmitting(true);
         attribution.setAttribution(intent, {
-          program
+          program,
         });
         await verifyUser({
           source: "Course Page",
@@ -64,42 +67,56 @@ const OtpForm = (props: {
             skip_existing_user_check: true,
             otp: data.otp,
             rcb_prams: {
-              attributions: attribution.getAttribution()
-            }
+              attributions: attribution.getAttribution(),
+            },
           },
         });
 
-        await bookLiveClass({ program })
+        await bookLiveClass({ program });
         toast.show({
           title: "OTP verification successful",
           variant: "success",
         });
         trackClick({ click_source: "otp_form", click_type: "otp_verified" });
-        trackClick({ click_type: "lead_gen" })
+        trackClick({
+          click_type: "lead_gen",
+          custom: {
+            ip: "rcb",
+            source: clickSource,
+            section: clickSection,
+          },
+        });
         defaultFormStore.set({ step: "success" });
       } catch (error: unknown) {
+        let errorMessage = VERIFY_OTP_ERROR_MAP.default;
         if (error instanceof ApiError) {
           const status = error.response?.status;
-          const errorMessage = VERIFY_OTP_ERROR_MAP[status || "default"];
+          errorMessage = VERIFY_OTP_ERROR_MAP[status];
           toast.show({
             title: "OTP verification failed",
             description: errorMessage,
             variant: "destructive",
           });
-          trackError("otp_verification_error", errorMessage);
-        } else {
-          toast.show({
-            title: "OTP verification failed",
-            description: "Something went wrong",
-            variant: "destructive",
-          });
-          trackError("otp_verification_error", "Something went wrong");
         }
+        toast.show({
+          title: "OTP verification failed",
+          description: errorMessage,
+          variant: "destructive",
+        });
+        trackClick({
+          click_type: "lead_gen_error",
+          custom: {
+            ip: "rcb",
+            source: clickSource,
+            section: clickSection,
+            message: errorMessage
+          },
+        });
       } finally {
         setSubmitting(false);
       }
     },
-    [phoneNumber, trackClick, intent, email, program, trackError]
+    [phoneNumber, trackClick, intent, program, email, clickSource, clickSection]
   );
 
   return (
@@ -108,11 +125,7 @@ const OtpForm = (props: {
         className="flex h-full flex-col justify-between"
         onSubmit={form.handleSubmit(handleSubmit)}
       >
-        <Flex
-          className="gap px-4 pb-6 sm:px-6"
-          direction="col"
-          gap="md"
-        >
+        <Flex className="gap px-4 pb-6 sm:px-6" direction="col" gap="md">
           <FormItem className="mt-2 mr-2 flex w-full flex-col gap-2">
             <FormControl className="h-10 sm:h-12">
               <PhoneInput

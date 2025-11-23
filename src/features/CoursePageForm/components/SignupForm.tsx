@@ -22,7 +22,11 @@ import { useTracking } from "@/common/hooks/useTracking";
 import { $initialData } from "@/common/stores/initial-data";
 import { toast } from "@/common/stores/toast";
 import { ApiError } from "@/common/utils/api";
-import { createUser, requestCallback, updateUser } from "@/features/CoursePageForm/api";
+import {
+  createUser,
+  requestCallback,
+  updateUser,
+} from "@/features/CoursePageForm/api";
 import { defaultFormStore } from "@/features/CoursePageForm/store";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -59,8 +63,8 @@ const formSchema = z.object({
 const SignupForm = (props: {
   intent: string;
   siteKey: string;
-  program: string
-  formIp: string
+  program: string;
+  formIp: string;
 }) => {
   const { siteKey } = props;
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -75,7 +79,7 @@ const SignupForm = (props: {
     },
   });
   const { clickSource, clickSection } = useStore($formTrigger);
-  const { trackClick, trackFormSubmitStatus, trackError } = useTracking();
+  const { trackClick, trackFormSubmitStatus } = useTracking();
   const currentYear = new Date().getFullYear();
   const initialData = useStore($initialData);
   const isLoggedIn = initialData?.data?.isLoggedIn;
@@ -109,7 +113,7 @@ const SignupForm = (props: {
 
         const toWhatsappConsent = (consent: boolean) =>
           consent ? "whatsapp_consent_yes" : "whatsapp_consent_no";
-        
+
         const basePayload = {
           account_type: "academy",
           type: "marketing",
@@ -143,51 +147,56 @@ const SignupForm = (props: {
             step: "success",
           });
           return;
-        };
-
-        console.log('customSource', clickSource)
-        console.log('clickSection', clickSection)
+        }
         toast.show({ title: "Signup successful", variant: "success" });
         trackFormSubmitStatus("signup_form_success");
         trackClick({ click_source: "form_first", click_type: "requested_otp" });
-        trackClick(
-          { click_type: "lead_gen_request", custom: {
+        trackClick({
+          click_type: "lead_gen_request",
+          custom: {
+            ip: "rcb",
             source: clickSource,
-            section: clickSection
-          }}
-        )
+            section: clickSection,
+          },
+        });
         defaultFormStore.set({
           step: "otp",
           email: data.email,
           phoneNumber: data.phone_number,
         });
       } catch (error: unknown) {
+        let errorMessage = CREATE_REGISTRATION_ERROR_MAP.default;
         if (error instanceof ApiError) {
           const status = error.response?.status;
-          const errorMessage =
-            CREATE_REGISTRATION_ERROR_MAP[status || "default"];
+          errorMessage = CREATE_REGISTRATION_ERROR_MAP[status || "default"];
           toast.show({
             title: "Signup failed",
             description: errorMessage,
             variant: "destructive",
           });
-          trackError("signup_form_error", errorMessage);
         } else {
           toast.show({ title: "Something went wrong", variant: "destructive" });
-          trackError("signup_form_error", "Something went wrong");
         }
+        trackClick({
+          click_type: "lead_gen_request_error",
+          custom: {
+            source: clickSource,
+            section: clickSection,
+            message: errorMessage,
+          },
+        });
       } finally {
         setIsSubmitting(false);
       }
     },
-    [ clickSection, 
-      clickSource, 
-      isLoggedIn, 
-      isPhoneVerified, 
-      token, 
-      trackClick, 
-      trackError, 
-      trackFormSubmitStatus
+    [
+      clickSection,
+      clickSource,
+      isLoggedIn,
+      isPhoneVerified,
+      token,
+      trackClick,
+      trackFormSubmitStatus,
     ]
   );
 
@@ -206,12 +215,10 @@ const SignupForm = (props: {
   return (
     <Form {...form}>
       <form
-        className="h-full justify-between flex flex-col"
+        className="flex h-full flex-col justify-between"
         onSubmit={form.handleSubmit(handleSubmit)}
       >
-        <div
-          className={cn("flex flex-col gap-2 px-4 pb-6 sm:px-6")}
-        > 
+        <div className={cn("flex flex-col gap-2 px-4 pb-6 sm:px-6")}>
           <input type="hidden" id="form_source" name="Form Source" />
           <input type="hidden" id="form_section" name="Form Section" />
           <FormField
@@ -340,27 +347,31 @@ const SignupForm = (props: {
             />
           )}
         </div>
-        <FooterBtn currentStep="personal-detail" isDisabled={isSubmitting} buttonWrapperClass="!px-2 pb-4 sm:px-4" />
-        <div className="-mt-2 text-[0.65rem] whitespace-nowrap sm:text-sm self-center">
-            By continuing you agree to &nbsp;
-            <a
-              className="text-blue-600 hover:underline"
-              href="https://scaler.com/terms"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              Scaler's Terms
-            </a>
-            &nbsp; and &nbsp;
-            <a
-              className="text-blue-600 hover:underline"
-              href="https://scaler.com/privacy"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              Privacy Policy
-            </a>
-          </div>
+        <FooterBtn
+          currentStep="personal-detail"
+          isDisabled={isSubmitting}
+          buttonWrapperClass="!px-2 pb-4 sm:px-4"
+        />
+        <div className="-mt-2 self-center text-[0.65rem] whitespace-nowrap sm:text-sm">
+          By continuing you agree to &nbsp;
+          <a
+            className="text-blue-600 hover:underline"
+            href="https://scaler.com/terms"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Scaler's Terms
+          </a>
+          &nbsp; and &nbsp;
+          <a
+            className="text-blue-600 hover:underline"
+            href="https://scaler.com/privacy"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Privacy Policy
+          </a>
+        </div>
       </form>
     </Form>
   );
