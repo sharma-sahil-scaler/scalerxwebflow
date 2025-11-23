@@ -33,15 +33,16 @@ export const useFormTriggerListener = () => {
   useEffect(() => {
     const clickHandler = (event: Event) => {
       const target = event.target as HTMLElement;
+      const trigger = target.closest(".form-trigger") as HTMLElement | null;
+      if (!trigger) return;
 
-      if (target.classList.contains("form-trigger")) {
-        console.log("Form trigger clicked", target.dataset);
-        $formTrigger.set({
-          clickSource: target.dataset.clickSource,
-          clickSection: target.dataset.clickSection,
-          intent: target.dataset.intent,
-        });
-      }
+      console.log("Form trigger clicked", trigger, trigger.dataset);
+
+      $formTrigger.set({
+        clickSource: trigger.dataset.clickSource,
+        clickSection: trigger.dataset.clickSection,
+        intent: trigger.dataset.intent,
+      });
     };
 
     document.addEventListener("click", clickHandler);
