@@ -26,7 +26,7 @@ export const FooterBtn = ({
           id="form-footer-btn"
           size="lg"
           variant="destructive"
-          className="w-full bg-[#C32742] py-4 text-xl hover:bg-[#C32742]/90 sm:py-6 cursor-pointer"
+          className="w-full bg-[#C32742] py-4 rounded-none text-xl hover:bg-[#C32742]/90 sm:py-6 cursor-pointer"
           disabled={isDisabled}
           type="submit"
         >
