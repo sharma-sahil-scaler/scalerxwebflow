@@ -34,7 +34,16 @@ const SignupFormComponent = declareComponent(DefaultForm, {
       group: "Property",
       options: ["academy", "data_science", "devops", "ai_ml"],
       defaultValue: "academy"
+    }),
+    force_click_section: props.Text({
+      name: "Force Click Section",
+      defaultValue: "Click Section For Mixpanel",
+    }),
+    force_click_source: props.Text({
+      name: "Force Click Source",
+      defaultValue: "Click Source For Mixpanel",
     })
+
   },
   options: {
     ssr: false,
