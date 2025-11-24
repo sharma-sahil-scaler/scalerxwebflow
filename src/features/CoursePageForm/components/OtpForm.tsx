@@ -201,7 +201,7 @@ const OtpForm = (props: { intent: string; program: string }) => {
               )}
             />
           </Flex>
-          <FooterBtn currentStep="otp" isDisabled={submitting} />
+          <FooterBtn currentStep="otp" isDisabled={submitting} buttonWrapperClass="px-4 pb-6 sm:px-6" />
         </form>
       </Form>
   );

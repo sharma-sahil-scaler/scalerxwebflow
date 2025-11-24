@@ -375,7 +375,7 @@ const SignupForm = (props: {
         <FooterBtn
           currentStep="personal-detail"
           isDisabled={isSubmitting}
-          buttonWrapperClass="!px-2 pb-4 sm:px-4"
+          buttonWrapperClass="px-4 pb-6 sm:px-6"
         />
         <div className="-mt-2 self-center text-[0.65rem] whitespace-nowrap sm:text-sm">
           By continuing you agree to &nbsp;
