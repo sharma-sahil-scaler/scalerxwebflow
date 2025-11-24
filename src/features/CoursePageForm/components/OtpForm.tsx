@@ -28,6 +28,7 @@ import { VERIFY_OTP_ERROR_MAP } from "../constant";
 import { useTracking } from "@/common/hooks/useTracking";
 import attribution from "@/common/utils/attribution";
 import { $formTrigger } from "@/common/hooks/useFormTrigger";
+import FormFieldTracker from "@/common/components/tracker/FormFieldTracker";
 
 const otpSchema = z.object({
   otp: z.string().min(4, { message: "Enter OTP" }),
@@ -46,6 +47,23 @@ const OtpForm = (props: { intent: string; program: string }) => {
     resolver: zodResolver(otpSchema),
   });
   const { trackClick } = useTracking();
+
+  const handleFieldBlurTracking = useCallback(
+    (name: string, value: string) => {
+      if(!value) return;
+
+      trackClick({
+        click_type: "form_input_field",
+        custom: {
+          ip: "rcb",
+          source: clickSource,
+          section: clickSection,
+          field_name: name
+        }
+      })
+    },
+    [clickSection, clickSource, trackClick]
+  );
 
   const handleSubmit = useCallback(
     async (data: z.infer<typeof otpSchema>) => {
@@ -117,63 +135,74 @@ const OtpForm = (props: { intent: string; program: string }) => {
         setSubmitting(false);
       }
     },
-    [phoneNumber, trackClick, intent, program, email, clickSource, clickSection]
+    [
+      intent,
+      otpIntent,
+      phoneNumber,
+      trackClick,
+      program,
+      email,
+      clickSource,
+      clickSection,
+    ]
   );
 
   return (
-    <Form {...form}>
-      <form
-        className="flex h-full flex-col justify-between"
-        onSubmit={form.handleSubmit(handleSubmit)}
-      >
-        <Flex className="gap px-4 pb-6 sm:px-6" direction="col" gap="md">
-          <FormItem className="mt-2 mr-2 flex w-full flex-col gap-2">
-            <FormControl className="h-10 sm:h-12">
-              <PhoneInput
-                className="flex w-full gap-4"
-                disabled
-                value={phoneNumber}
-                placeholder="Mobile Number"
-                aria-describedby="phone-message"
-              />
-            </FormControl>
-            <FormMessage id="phone-message" />
-          </FormItem>
+    <FormFieldTracker onFieldBlur={handleFieldBlurTracking}>
+      <Form {...form}>
+        <form
+          className="flex h-full flex-col justify-between"
+          onSubmit={form.handleSubmit(handleSubmit)}
+        >
+          <Flex className="gap px-4 pb-6 sm:px-6" direction="col" gap="md">
+            <FormItem className="mt-2 mr-2 flex w-full flex-col gap-2">
+              <FormControl className="h-10 sm:h-12">
+                <PhoneInput
+                  className="flex w-full gap-4"
+                  disabled
+                  value={phoneNumber}
+                  placeholder="Mobile Number"
+                  aria-describedby="phone-message"
+                />
+              </FormControl>
+              <FormMessage id="phone-message" />
+            </FormItem>
 
-          <FormField
-            name="otp"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem className="flex w-full flex-col items-start">
-                <FormLabel>One-Time Password</FormLabel>
-                <FormControl>
-                  <InputOTP
-                    containerClassName="w-full"
-                    maxLength={6}
-                    {...field}
-                    data-field-id="otp"
-                  >
-                    <InputOTPGroup className="my-2 w-full justify-between gap-4">
-                      {Array.from({ length: 6 }).map((_, index) => {
-                        return (
-                          <InputOTPSlot
-                            key={index}
-                            className="h-12 flex-1 rounded-xl"
-                            index={index}
-                          />
-                        );
-                      })}
-                    </InputOTPGroup>
-                  </InputOTP>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </Flex>
-        <FooterBtn currentStep="otp" isDisabled={submitting} />
-      </form>
-    </Form>
+            <FormField
+              name="otp"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem className="flex w-full flex-col items-start">
+                  <FormLabel>One-Time Password</FormLabel>
+                  <FormControl>
+                    <InputOTP
+                      containerClassName="w-full"
+                      maxLength={6}
+                      {...field}
+                      data-field-id="otp"
+                    >
+                      <InputOTPGroup className="my-2 w-full justify-between gap-4">
+                        {Array.from({ length: 6 }).map((_, index) => {
+                          return (
+                            <InputOTPSlot
+                              key={index}
+                              className="h-12 flex-1 rounded-xl"
+                              index={index}
+                            />
+                          );
+                        })}
+                      </InputOTPGroup>
+                    </InputOTP>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </Flex>
+          <FooterBtn currentStep="otp" isDisabled={submitting} />
+        </form>
+      </Form>
+    </FormFieldTracker>
   );
 };
 
