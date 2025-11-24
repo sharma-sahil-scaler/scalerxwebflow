@@ -127,11 +127,12 @@ export const useAnalyticsHandler = () => {
     const clickHandler = (event: Event) => {
       const target = event.target as HTMLElement;
 
-      if (
-        target.classList.contains("gtm-track-element") &&
-        target.dataset.gtmCategory === "button"
-      ) {
-        trackButtonClick(target);
+      const trackableElement = target.closest(
+        '.gtm-track-element[data-gtm-category="button"]'
+      );
+
+      if (trackableElement) {
+        trackButtonClick(trackableElement);
       }
     };
 

@@ -218,7 +218,7 @@ const SignupForm = (props: {
       if (!value) return;
 
       trackClick({
-        click_type: "form_input_field",
+        click_type: "form_input_filled",
         custom: {
           ip: "rcb",
           source: clickSource,
