@@ -37,11 +37,11 @@ const SignupFormComponent = declareComponent(DefaultForm, {
     }),
     force_click_section: props.Text({
       name: "Force Click Section",
-      defaultValue: "Click Section For Mixpanel",
+      defaultValue: "",
     }),
     force_click_source: props.Text({
       name: "Force Click Source",
-      defaultValue: "Click Source For Mixpanel",
+      defaultValue: "",
     })
 
   },
