@@ -39,7 +39,6 @@ import { z } from "zod";
 import { CREATE_REGISTRATION_ERROR_MAP, JOB_TITLE_OPTIONS } from "../constant";
 import { FooterBtn } from "./FooterBtn";
 import { $formTrigger } from "@/common/hooks/useFormTrigger";
-import FormFieldTracker from "@/common/components/tracker/FormFieldTracker";
 
 type UserProfile = {
   email?: string;
@@ -214,7 +213,8 @@ const SignupForm = (props: {
 
   const handleFieldBlurTracking = useCallback(
     (name: string, value: string) => {
-      if(!value) return;
+      console.log("Name", name);
+      if (!value) return;
 
       trackClick({
         click_type: "form_input_field",
@@ -222,179 +222,183 @@ const SignupForm = (props: {
           ip: "rcb",
           source: clickSource,
           section: clickSection,
-          field_name: name
-        }
-      })
+          field_name: name,
+        },
+      });
     },
     [clickSection, clickSource, trackClick]
   );
 
   return (
-    <FormFieldTracker onFieldBlur={handleFieldBlurTracking}>
-      <Form {...form}>
-        <form
-          className="flex h-full flex-col justify-between"
-          onSubmit={form.handleSubmit(handleSubmit)}
-        >
-          <div className={cn("flex flex-col gap-2 px-4 pb-6 sm:px-6")}>
-            <input type="hidden" id="form_source" name="Form Source" />
-            <input type="hidden" id="form_section" name="Form Section" />
-            <FormField
-              name="email"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem className="mt-2 mr-2 flex w-full flex-col gap-2">
-                  <FormControl>
-                    <Input
-                      className="h-10 sm:h-12"
-                      placeholder="Email"
-                      aria-describedby="email-message"
-                      data-field-id="email"
-                      type="email"
-                      disabled={isLoggedIn && !!field.value}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage id="email-message" />
-                </FormItem>
-              )}
-            />
-            <FormField
-              name="orgyear"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem className="mt-2 mr-2 flex w-full gap-2">
-                  <Select
+    <Form {...form}>
+      <form
+        className="flex h-full flex-col justify-between"
+        onSubmit={form.handleSubmit(handleSubmit)}
+      >
+        <div className={cn("flex flex-col gap-2 px-4 pb-6 sm:px-6")}>
+          <FormField
+            name="email"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem className="mt-2 mr-2 flex w-full flex-col gap-2">
+                <FormControl>
+                  <Input
+                    className="h-10 sm:h-12"
+                    placeholder="Email"
+                    aria-describedby="email-message"
+                    data-field-id="email"
+                    type="email"
                     disabled={isLoggedIn && !!field.value}
-                    value={field.value}
-                    onValueChange={(value: string) => {
-                      handleFieldBlurTracking("orgyear", value)
-                      field.onChange(value);
+                    {...field}
+                    onBlur={(e) => {
+                      field.onBlur();
+                      handleFieldBlurTracking("email", e.target.value);
                     }}
-                  >
-                    <FormControl className="!h-10 w-full text-base sm:!h-12">
-                      <SelectTrigger>
-                        <SelectValue placeholder="Graduation year" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent className="h-58 w-full">
-                      {graduationYears.map((year) => (
-                        <SelectItem key={year} value={year}>
-                          {year}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="position"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem className="mt-2 mr-2 flex w-full gap-2">
-                  <Select
-                    value={field.value}
-                    onValueChange={(value: string) => {
-                      handleFieldBlurTracking("position", value)
-                      field.onChange(value);
-                    }}
-                  >
-                    <FormControl className="!h-10 w-full text-base sm:!h-12">
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Job Title" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent className="h-58 w-full">
-                      {JOB_TITLE_OPTIONS.map((jobTitle) => (
-                        <SelectItem key={jobTitle.value} value={jobTitle.value}>
-                          {jobTitle.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="phone_number"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem className="mt-2 mr-2 flex w-full flex-col gap-2">
-                  <FormControl className="h-10 sm:h-12">
-                    <PhoneInput
-                      className="flex w-full gap-4"
-                      placeholder="Mobile Number"
-                      aria-describedby="phone-message"
-                      data-field-id="phone_number"
-                      defaultCountry="IN"
-                      disabled={isLoggedIn && !!field.value}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage id="phone-message" />
-                </FormItem>
-              )}
-            />
-            <FormField
-              name="whatsapp_consent"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center space-y-0 space-x-3">
-                  <FormControl>
-                    <Checkbox
-                      className="mr-0 data-[state=checked]:border-none data-[state=checked]:bg-[#006AFF]"
-                      checked={!!field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormDescription className="text-foreground text-[0.65rem] md:text-xs">
-                      I wish to receive updates & confirmation via WhatsApp
-                    </FormDescription>
-                  </div>
-                </FormItem>
-              )}
-            />
-            {mode === "publish" && (
-              <ShadowTurnstile
-                onTokenObtained={handleTokenObtained}
-                siteKey={siteKey}
-              />
+                  />
+                </FormControl>
+                <FormMessage id="email-message" />
+              </FormItem>
             )}
-          </div>
-          <FooterBtn
-            currentStep="personal-detail"
-            isDisabled={isSubmitting}
-            buttonWrapperClass="!px-2 pb-4 sm:px-4"
           />
-          <div className="-mt-2 self-center text-[0.65rem] whitespace-nowrap sm:text-sm">
-            By continuing you agree to &nbsp;
-            <a
-              className="text-blue-600 hover:underline"
-              href="https://scaler.com/terms"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              Scaler's Terms
-            </a>
-            &nbsp; and &nbsp;
-            <a
-              className="text-blue-600 hover:underline"
-              href="https://scaler.com/privacy"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              Privacy Policy
-            </a>
-          </div>
-        </form>
-      </Form>
-    </FormFieldTracker>
+          <FormField
+            name="orgyear"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem className="mt-2 mr-2 flex w-full gap-2">
+                <Select
+                  disabled={isLoggedIn && !!field.value}
+                  value={field.value}
+                  onValueChange={(value: string) => {
+                    handleFieldBlurTracking("orgyear", value);
+                    field.onChange(value);
+                  }}
+                >
+                  <FormControl className="!h-10 w-full text-base sm:!h-12">
+                    <SelectTrigger>
+                      <SelectValue placeholder="Graduation year" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent className="h-58 w-full">
+                    {graduationYears.map((year) => (
+                      <SelectItem key={year} value={year}>
+                        {year}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            name="position"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem className="mt-2 mr-2 flex w-full gap-2">
+                <Select
+                  value={field.value}
+                  onValueChange={(value: string) => {
+                    handleFieldBlurTracking("position", value);
+                    field.onChange(value);
+                  }}
+                >
+                  <FormControl className="!h-10 w-full text-base sm:!h-12">
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Job Title" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent className="h-58 w-full">
+                    {JOB_TITLE_OPTIONS.map((jobTitle) => (
+                      <SelectItem key={jobTitle.value} value={jobTitle.value}>
+                        {jobTitle.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            name="phone_number"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem className="mt-2 mr-2 flex w-full flex-col gap-2">
+                <FormControl className="h-10 sm:h-12">
+                  <PhoneInput
+                    className="flex w-full gap-4"
+                    placeholder="Mobile Number"
+                    aria-describedby="phone-message"
+                    data-field-id="phone_number"
+                    defaultCountry="IN"
+                    disabled={isLoggedIn && !!field.value}
+                    {...field}
+                    onBlur={() => {
+                      field.onBlur();
+                      handleFieldBlurTracking("phone_number", field.value);
+                    }}
+                  />
+                </FormControl>
+                <FormMessage id="phone-message" />
+              </FormItem>
+            )}
+          />
+          <FormField
+            name="whatsapp_consent"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center space-y-0 space-x-3">
+                <FormControl>
+                  <Checkbox
+                    className="mr-0 data-[state=checked]:border-none data-[state=checked]:bg-[#006AFF]"
+                    checked={!!field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormDescription className="text-foreground text-[0.65rem] md:text-xs">
+                    I wish to receive updates & confirmation via WhatsApp
+                  </FormDescription>
+                </div>
+              </FormItem>
+            )}
+          />
+          {mode === "publish" && (
+            <ShadowTurnstile
+              onTokenObtained={handleTokenObtained}
+              siteKey={siteKey}
+            />
+          )}
+        </div>
+        <FooterBtn
+          currentStep="personal-detail"
+          isDisabled={isSubmitting}
+          buttonWrapperClass="!px-2 pb-4 sm:px-4"
+        />
+        <div className="-mt-2 self-center text-[0.65rem] whitespace-nowrap sm:text-sm">
+          By continuing you agree to &nbsp;
+          <a
+            className="text-blue-600 hover:underline"
+            href="https://scaler.com/terms"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Scaler's Terms
+          </a>
+          &nbsp; and &nbsp;
+          <a
+            className="text-blue-600 hover:underline"
+            href="https://scaler.com/privacy"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Privacy Policy
+          </a>
+        </div>
+      </form>
+    </Form>
   );
 };
 

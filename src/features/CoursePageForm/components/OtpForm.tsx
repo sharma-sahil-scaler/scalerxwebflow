@@ -28,7 +28,6 @@ import { VERIFY_OTP_ERROR_MAP } from "../constant";
 import { useTracking } from "@/common/hooks/useTracking";
 import attribution from "@/common/utils/attribution";
 import { $formTrigger } from "@/common/hooks/useFormTrigger";
-import FormFieldTracker from "@/common/components/tracker/FormFieldTracker";
 
 const otpSchema = z.object({
   otp: z.string().min(4, { message: "Enter OTP" }),
@@ -148,8 +147,7 @@ const OtpForm = (props: { intent: string; program: string }) => {
   );
 
   return (
-    <FormFieldTracker onFieldBlur={handleFieldBlurTracking}>
-      <Form {...form}>
+    <Form {...form}>
         <form
           className="flex h-full flex-col justify-between"
           onSubmit={form.handleSubmit(handleSubmit)}
@@ -180,6 +178,10 @@ const OtpForm = (props: { intent: string; program: string }) => {
                       maxLength={6}
                       {...field}
                       data-field-id="otp"
+                      onBlur={() => {
+                        field.onBlur();
+                        handleFieldBlurTracking("otp", field.value);
+                      }}
                     >
                       <InputOTPGroup className="my-2 w-full justify-between gap-4">
                         {Array.from({ length: 6 }).map((_, index) => {
@@ -202,7 +204,6 @@ const OtpForm = (props: { intent: string; program: string }) => {
           <FooterBtn currentStep="otp" isDisabled={submitting} />
         </form>
       </Form>
-    </FormFieldTracker>
   );
 };
 
