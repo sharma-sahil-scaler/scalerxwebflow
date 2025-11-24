@@ -12,6 +12,7 @@ import SignupForm from "./components/SignupForm";
 import OtpStep from "./components/OtpForm";
 import SuccessAnimation from "./components/SuccessAnimation";
 import { $initialData } from "@/common/stores/initial-data";
+import { $formTrigger } from "@/common/hooks/useFormTrigger";
 
 type DefaultFormProps = {
   form_subtitle: string;
@@ -19,35 +20,52 @@ type DefaultFormProps = {
   otp_intent: string;
   form_title: string;
   turnstile_key: string;
-  program: string
+  program: string;
+  force_click_section?: string;
+  force_click_source?: string;
 };
 
 const FormStep = ({
-  signupIntent,
-  otpIntent,
+  forceSignupIntent,
+  forceOtpIntent,
   siteKey,
-  program
+  program,
+  forceClickSource,
+  forceClickSection,
 }: {
-  signupIntent: string;
-  otpIntent: string;
+  forceSignupIntent?: string;
+  forceOtpIntent?: string;
+  forceClickSource?: string;
+  forceClickSection?: string;
   siteKey: string;
-  program: string
+  program: string;
 }) => {
   const { step } = useStore(defaultFormStore);
+  const {
+    clickSource: triggerClickSource,
+    clickSection: triggerClickSection,
+    signupIntent: triggerSignupIntent,
+    otpIntent: triggerOtpIntent,
+  } = useStore($formTrigger);
+
+  const clickSource = forceClickSource || triggerClickSource || "unknown";
+  const clickSection = forceClickSection || triggerClickSection || "unknown";
+  const signupIntent = forceSignupIntent || triggerSignupIntent || "rcb_form";
+  const otpIntent = forceOtpIntent || triggerOtpIntent || "rcb_form";
 
   switch (step) {
     case "signup":
       return (
         <SignupForm
           intent={signupIntent}
-          {...{ siteKey, program }}
+          {...{ siteKey, program, clickSource, clickSection }}
         />
       );
     case "otp":
       return (
         <OtpStep
           intent={otpIntent}
-          {...{ program }}
+          {...{ program, clickSource, clickSection }}
         />
       );
     case "success":
@@ -64,7 +82,9 @@ const CoursePageForm = (props: DefaultFormProps) => {
     otp_intent: otpIntent,
     form_title: formTitle,
     turnstile_key: siteKey,
-    program
+    force_click_section: forceClickSection,
+    force_click_source: forceClickSource,
+    program,
   } = props;
 
   const initialStore = useStore($initialData);
@@ -72,9 +92,9 @@ const CoursePageForm = (props: DefaultFormProps) => {
 
   if (loading) {
     return (
-      <div className="flex h-full rounded-none w-full items-center justify-center">
+      <div className="flex h-full w-full items-center justify-center">
         <Card
-          className="h-full w-full gap-2 items-center justify-center bg-[#fafbfc] py-4 "
+          className="h-full w-full items-center justify-center gap-2 rounded-none bg-[#fafbfc] py-4"
           aria-label="Test Issuance Form"
         >
           <Spinner className="size-12" />
@@ -85,7 +105,7 @@ const CoursePageForm = (props: DefaultFormProps) => {
     return (
       <div className="flex h-full items-center justify-center">
         <Card
-          className="h-full w-full rounded-none gap-2 bg-[#fafbfc] py-4 border-hidden"
+          className="h-full w-full gap-2 rounded-none border-hidden bg-[#fafbfc] py-4"
           aria-label="Test Issuance Form"
         >
           <CardHeader className="px-4 md:px-6">
@@ -100,7 +120,9 @@ const CoursePageForm = (props: DefaultFormProps) => {
                 signupIntent,
                 otpIntent,
                 siteKey,
-                program
+                program,
+                forceClickSection,
+                forceClickSource,
               }}
             />
           </CardContent>

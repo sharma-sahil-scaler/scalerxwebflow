@@ -38,7 +38,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { CREATE_REGISTRATION_ERROR_MAP, JOB_TITLE_OPTIONS } from "../constant";
 import { FooterBtn } from "./FooterBtn";
-import { $formTrigger } from "@/common/hooks/useFormTrigger";
 
 type UserProfile = {
   email?: string;
@@ -64,8 +63,10 @@ const SignupForm = (props: {
   intent: string;
   siteKey: string;
   program: string;
+  clickSource: string;
+  clickSection: string;
 }) => {
-  const { siteKey } = props;
+  const { siteKey, clickSource, clickSection } = props;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -77,7 +78,7 @@ const SignupForm = (props: {
       whatsapp_consent: false,
     },
   });
-  const { clickSource, clickSection } = useStore($formTrigger);
+
   const { trackClick, trackFormSubmitStatus } = useTracking();
   const currentYear = new Date().getFullYear();
   const initialData = useStore($initialData);
@@ -189,12 +190,12 @@ const SignupForm = (props: {
       }
     },
     [
-      clickSection,
-      clickSource,
       isLoggedIn,
       isPhoneVerified,
       token,
       trackClick,
+      clickSection,
+      clickSource,
       trackFormSubmitStatus,
     ]
   );
@@ -226,7 +227,7 @@ const SignupForm = (props: {
         },
       });
     },
-    [clickSection, clickSource, trackClick]
+    [trackClick, clickSection, clickSource]
   );
 
   return (
@@ -243,7 +244,7 @@ const SignupForm = (props: {
               <FormItem className="mt-2 mr-2 flex w-full flex-col gap-2">
                 <FormControl>
                   <Input
-                    className="h-10 sm:h-12 rounded-none"
+                    className="h-10 rounded-none sm:h-12"
                     placeholder="Email"
                     aria-describedby="email-message"
                     data-field-id="email"
@@ -303,7 +304,7 @@ const SignupForm = (props: {
                     field.onChange(value);
                   }}
                 >
-                  <FormControl className="!h-10 w-full text-base sm:!h-12 rounded-none">
+                  <FormControl className="!h-10 w-full rounded-none text-base sm:!h-12">
                     <SelectTrigger>
                       <SelectValue placeholder="Select Job Title" />
                     </SelectTrigger>
