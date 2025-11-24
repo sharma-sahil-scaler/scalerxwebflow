@@ -61,7 +61,7 @@ const InputComponent = React.forwardRef<
   React.ComponentProps<"input">
 >(({ className, ...props }, ref) => (
   <Input
-    className={cn("h-12 h-full rounded-lg !text-base", className)}
+    className={cn("h-12 h-full rounded-none !text-base", className)}
     {...props}
     ref={ref}
   />
@@ -88,7 +88,7 @@ const CountrySelect = ({
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className="flex h-12 h-full gap-1 rounded-lg px-3 focus:z-10"
+          className="flex h-12 h-full gap-1 rounded-none px-3 focus:z-10"
           disabled={disabled}
           type="button"
         >
