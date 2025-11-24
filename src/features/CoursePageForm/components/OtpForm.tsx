@@ -156,7 +156,7 @@ const OtpForm = (props: { intent: string; program: string }) => {
             <FormItem className="mt-2 mr-2 flex w-full flex-col gap-2">
               <FormControl className="h-10 sm:h-12">
                 <PhoneInput
-                  className="flex w-full gap-4"
+                  className="flex w-full gap-4 rounded-none"
                   disabled
                   value={phoneNumber}
                   placeholder="Mobile Number"
@@ -188,7 +188,7 @@ const OtpForm = (props: { intent: string; program: string }) => {
                           return (
                             <InputOTPSlot
                               key={index}
-                              className="h-12 flex-1 rounded-xl"
+                              className="h-12 flex-1 rounded-none"
                               index={index}
                             />
                           );

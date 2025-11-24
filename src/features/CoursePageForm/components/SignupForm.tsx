@@ -243,7 +243,7 @@ const SignupForm = (props: {
               <FormItem className="mt-2 mr-2 flex w-full flex-col gap-2">
                 <FormControl>
                   <Input
-                    className="h-10 sm:h-12"
+                    className="h-10 sm:h-12 rounded-none"
                     placeholder="Email"
                     aria-describedby="email-message"
                     data-field-id="email"
@@ -274,11 +274,11 @@ const SignupForm = (props: {
                   }}
                 >
                   <FormControl className="!h-10 w-full text-base sm:!h-12">
-                    <SelectTrigger>
+                    <SelectTrigger className="rounded-none">
                       <SelectValue placeholder="Graduation year" />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent className="h-58 w-full">
+                  <SelectContent className="h-58 w-full rounded-none">
                     {graduationYears.map((year) => (
                       <SelectItem key={year} value={year}>
                         {year}
@@ -303,12 +303,12 @@ const SignupForm = (props: {
                     field.onChange(value);
                   }}
                 >
-                  <FormControl className="!h-10 w-full text-base sm:!h-12">
+                  <FormControl className="!h-10 w-full text-base sm:!h-12 rounded-none">
                     <SelectTrigger>
                       <SelectValue placeholder="Select Job Title" />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent className="h-58 w-full">
+                  <SelectContent className="h-58 w-full rounded-none">
                     {JOB_TITLE_OPTIONS.map((jobTitle) => (
                       <SelectItem key={jobTitle.value} value={jobTitle.value}>
                         {jobTitle.label}
@@ -328,7 +328,7 @@ const SignupForm = (props: {
               <FormItem className="mt-2 mr-2 flex w-full flex-col gap-2">
                 <FormControl className="h-10 sm:h-12">
                   <PhoneInput
-                    className="flex w-full gap-4"
+                    className="flex w-full gap-4 rounded-none"
                     placeholder="Mobile Number"
                     aria-describedby="phone-message"
                     data-field-id="phone_number"

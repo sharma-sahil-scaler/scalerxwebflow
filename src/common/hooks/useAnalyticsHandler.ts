@@ -78,10 +78,9 @@ export const useAnalyticsHandler = () => {
     (element: Element) => {
       const attributes = extractAttributes(element);
       tracker.click({
-        click_type:
-          attributes.click_type || "button_click",
+        click_type: attributes.click_type || "button_click",
         click_text: attributes.element_text || "button_click",
-        click_source: attributes.source || "unknown"
+        click_source: attributes.source || "unknown",
       });
     },
     [extractAttributes]
@@ -125,21 +124,21 @@ export const useAnalyticsHandler = () => {
   }, []);
 
   const setupButtonTracking = useCallback(() => {
-      const clickHandler = (event: Event) => {
-        const target = event.target as HTMLElement;
+    const clickHandler = (event: Event) => {
+      const target = event.target as HTMLElement;
 
-        if (target.classList.contains('gtm-track-element') 
-          && target.dataset.gtmCategory === 'button') {
-          trackButtonClick(target);
-        }
-      };
+      if (
+        target.classList.contains("gtm-track-element") &&
+        target.dataset.gtmCategory === "button"
+      ) {
+        trackButtonClick(target);
+      }
+    };
 
-      document.addEventListener("click", clickHandler);
+    document.addEventListener("click", clickHandler);
 
-      return clickHandler;
-    },
-    [trackButtonClick]
-  );
+    return clickHandler;
+  }, [trackButtonClick]);
 
   const setupSectionTracking = useCallback(
     (sections: Element[]) => {
