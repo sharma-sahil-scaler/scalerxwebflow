@@ -32,7 +32,7 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useStore } from "@nanostores/react";
 import { isValidPhoneNumber, parsePhoneNumber } from "libphonenumber-js";
-import { useCallback, useEffect, useMemo, useState, memo } from "react";
+import { useCallback, useEffect, useMemo, useState, memo, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { CREATE_REGISTRATION_ERROR_MAP, JOB_TITLE_OPTIONS } from "../constant";
@@ -68,6 +68,7 @@ const SignupForm = (props: {
 }) => {
   const { siteKey, clickSource, clickSection } = props;
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const portalRef = useRef<HTMLDivElement>(null);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -364,13 +365,15 @@ const SignupForm = (props: {
               </FormItem>
             )}
           />
-          {createPortal(
-            <BotVerification
-              onTokenObtained={handleTokenObtained}
-              {...{ siteKey }}
-            />,
-            document.body
-          )}
+          <div ref={portalRef}>
+            {portalRef.current && createPortal(
+              <BotVerification
+                onTokenObtained={handleTokenObtained}
+                {...{ siteKey }}
+              />,
+              portalRef.current
+            )}
+          </div>
         </div>
         <FooterBtn
           currentStep="personal-detail"
