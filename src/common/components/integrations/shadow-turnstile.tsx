@@ -1,24 +1,39 @@
-import useTurnstile from "@/common/hooks/useTurnstile";
+import React, { useEffect, useState } from "react";
+import { Turnstile } from "@marsidev/react-turnstile";
+import type {
+  TurnstileProps,
+  TurnstileInstance,
+} from "@marsidev/react-turnstile";
 
-const ShadowTurnstile = ({
+const BotVerification = ({
   onTokenObtained,
-  onError,
-  onExpired,
+  options = {},
   siteKey,
 }: {
   onTokenObtained: (token: string) => void;
-  onError?: (e: Error) => void | undefined;
-  onExpired?: () => void | undefined;
+  options?: TurnstileProps["options"];
   siteKey: string;
 }) => {
-  const { slotRef, slotName } = useTurnstile({
-    siteKey,
-    onTokenObtained,
-    onError: onError || (() => {}),
-    onExpired: onExpired || (() => {}),
-  });
+  const ref = React.useRef<TurnstileInstance>(null);
+  const [token, setToken] = useState<string>();
 
-  return <slot ref={slotRef} name={slotName}></slot>;
+  useEffect(() => {
+    if (token) {
+      onTokenObtained(token);
+    }
+  }, [onTokenObtained, token]);
+
+  return (
+    <Turnstile
+      onSuccess={(payload: string) => {
+        setToken(payload);
+      }}
+      onError={() => ref.current?.reset()}
+      onExpire={() => ref.current?.reset()}
+      className="my-12"
+      {...{ ref, options, siteKey }}
+    />
+  );
 };
 
-export default ShadowTurnstile;
+export default BotVerification;

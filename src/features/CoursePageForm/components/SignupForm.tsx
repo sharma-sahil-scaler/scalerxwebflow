@@ -1,4 +1,4 @@
-import ShadowTurnstile from "@/common/components/integrations/shadow-turnstile";
+import BotVerification from "@/common/components/integrations/shadow-turnstile";
 import { Checkbox } from "@/common/components/ui/checkbox";
 import {
   Form,
@@ -31,13 +31,13 @@ import { defaultFormStore } from "@/features/CoursePageForm/store";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useStore } from "@nanostores/react";
-import { useWebflowContext } from "@webflow/react";
 import { isValidPhoneNumber, parsePhoneNumber } from "libphonenumber-js";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, memo } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { CREATE_REGISTRATION_ERROR_MAP, JOB_TITLE_OPTIONS } from "../constant";
 import { FooterBtn } from "./FooterBtn";
+import { createPortal } from "react-dom";
 
 type UserProfile = {
   email?: string;
@@ -79,9 +79,6 @@ const SignupForm = (props: {
     },
   });
 
-
-  console.log("SiteKey", siteKey)
-
   const { trackClick, trackFormSubmitStatus } = useTracking();
   const currentYear = new Date().getFullYear();
   const initialData = useStore($initialData);
@@ -102,8 +99,6 @@ const SignupForm = (props: {
   const handleTokenObtained = useCallback((token: string) => {
     setToken(token);
   }, []);
-
-  const { mode } = useWebflowContext();
 
   const handleSubmit = useCallback(
     async (data: z.infer<typeof formSchema>) => {
@@ -369,11 +364,12 @@ const SignupForm = (props: {
               </FormItem>
             )}
           />
-          {mode === "publish" && (
-            <ShadowTurnstile
+          {createPortal(
+            <BotVerification
               onTokenObtained={handleTokenObtained}
-              siteKey={siteKey}
-            />
+              {...{ siteKey }}
+            />,
+            document.body
           )}
         </div>
         <FooterBtn
@@ -406,4 +402,4 @@ const SignupForm = (props: {
   );
 };
 
-export default SignupForm;
+export default memo(SignupForm);
