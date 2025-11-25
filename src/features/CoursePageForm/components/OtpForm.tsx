@@ -38,11 +38,10 @@ const OtpForm = (props: {
   clickSource: string;
   clickSection: string;
 }) => {
-  const { intent, clickSource, clickSection } = props;
+  const { intent, clickSource, clickSection, program } = props;
   const {
     email,
     phoneNumber,
-    program = "academy",
   } = useStore(defaultFormStore);
   const [submitting, setSubmitting] = useState(false);
   const form = useForm<z.infer<typeof otpSchema>>({
