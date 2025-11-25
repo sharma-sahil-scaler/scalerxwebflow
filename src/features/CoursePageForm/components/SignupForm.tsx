@@ -79,6 +79,9 @@ const SignupForm = (props: {
     },
   });
 
+
+  console.log("SiteKey", siteKey)
+
   const { trackClick, trackFormSubmitStatus } = useTracking();
   const currentYear = new Date().getFullYear();
   const initialData = useStore($initialData);
