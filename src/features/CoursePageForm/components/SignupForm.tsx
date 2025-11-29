@@ -32,7 +32,15 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useStore } from "@nanostores/react";
 import { isValidPhoneNumber, parsePhoneNumber } from "libphonenumber-js";
-import { useCallback, useEffect, useMemo, useState, memo, useRef } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  memo,
+  useRef,
+  useId,
+} from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { CREATE_REGISTRATION_ERROR_MAP, JOB_TITLE_OPTIONS } from "../constant";
@@ -68,7 +76,6 @@ const SignupForm = (props: {
 }) => {
   const { siteKey, clickSource, clickSection } = props;
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const portalRef = useRef<HTMLDivElement>(null);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -79,7 +86,7 @@ const SignupForm = (props: {
       whatsapp_consent: false,
     },
   });
-
+  const slotRef = useRef<HTMLSlotElement | null>(null);
   const { trackClick, trackFormSubmitStatus } = useTracking();
   const currentYear = new Date().getFullYear();
   const initialData = useStore($initialData);
@@ -90,6 +97,7 @@ const SignupForm = (props: {
     | null
     | undefined;
   const [token, setToken] = useState("");
+  const id = useId();
 
   const graduationYears = useMemo(() => {
     return Array.from({ length: 61 }, (_, i) =>
@@ -99,6 +107,14 @@ const SignupForm = (props: {
 
   const handleTokenObtained = useCallback((token: string) => {
     setToken(token);
+  }, []);
+
+  const findHost = useCallback(() => {
+    const root = slotRef.current?.getRootNode();
+    if (root instanceof ShadowRoot) {
+      return root.host as HTMLElement;
+    }
+    return null;
   }, []);
 
   const handleSubmit = useCallback(
@@ -365,15 +381,17 @@ const SignupForm = (props: {
               </FormItem>
             )}
           />
-          <div ref={portalRef}>
-            {portalRef.current && createPortal(
-              <BotVerification
-                onTokenObtained={handleTokenObtained}
-                {...{ siteKey }}
-              />,
-              portalRef.current
+          <slot name={id} ref={slotRef}></slot>
+          {findHost() &&
+            createPortal(
+              <div slot={id}>
+                <BotVerification
+                  onTokenObtained={handleTokenObtained}
+                  {...{ siteKey }}
+                />
+              </div>,
+              findHost()
             )}
-          </div>
         </div>
         <FooterBtn
           currentStep="personal-detail"
