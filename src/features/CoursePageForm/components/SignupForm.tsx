@@ -259,7 +259,7 @@ const SignupForm = (props: {
               <FormItem className="mt-2 mr-2 flex w-full flex-col gap-2">
                 <FormControl>
                   <Input
-                    className="h-10 rounded-none sm:h-12"
+                    className="h-10 rounded-none sm:h-12 border-gray-300"
                     placeholder="Email"
                     aria-describedby="email-message"
                     data-field-id="email"
