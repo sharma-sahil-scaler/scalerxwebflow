@@ -23,6 +23,8 @@ const BotVerification = ({
     }
   }, [onTokenObtained, token]);
 
+  if(!['www.scaler.com'].includes(location.hostname)) return;
+
   return (
     <Turnstile
       onSuccess={(payload: string) => {

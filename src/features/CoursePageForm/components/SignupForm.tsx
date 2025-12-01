@@ -88,7 +88,7 @@ const SignupForm = (props: {
     },
   });
   const { mode } = useWebflowContext();
-  console.log("Mode", mode)
+  console.log("Mode", mode);
   const slotRef = useRef<HTMLSlotElement | null>(null);
   const { trackClick, trackFormSubmitStatus } = useTracking();
   const currentYear = new Date().getFullYear();
@@ -240,14 +240,13 @@ const SignupForm = (props: {
     [trackClick, clickSection, clickSource]
   );
 
-  const findHost = () => {
+  const findHost = useCallback(() => {
     const root = slotRef.current?.getRootNode();
     if (root instanceof ShadowRoot) {
       return root.host as HTMLElement;
     }
     return null;
-
-  }
+  }, []);
 
   return (
     <Form {...form}>
@@ -386,19 +385,16 @@ const SignupForm = (props: {
             )}
           />
           <slot name={id} ref={slotRef}></slot>
-          {mode === "publish" && findHost() && (
-            <>
-              {createPortal(
-                <div slot={id}>
-                  <BotVerification
-                    onTokenObtained={handleTokenObtained}
-                    siteKey={siteKey}
-                  />
-                </div>,
-                findHost()
-              )}
-            </>
-          )}
+          {findHost() &&
+            createPortal(
+              <div slot={id}>
+                <BotVerification
+                  onTokenObtained={handleTokenObtained}
+                  {...{ siteKey }}
+                />
+              </div>,
+              findHost()
+            )}
         </div>
         <FooterBtn
           currentStep="personal-detail"
