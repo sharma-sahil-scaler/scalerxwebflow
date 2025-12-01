@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/common/components/ui/select";
+import { useWebflowContext } from "@webflow/react";
 import attribution from "@/common/utils/attribution";
 import { useTracking } from "@/common/hooks/useTracking";
 import { $initialData } from "@/common/stores/initial-data";
@@ -86,6 +87,7 @@ const SignupForm = (props: {
       whatsapp_consent: false,
     },
   });
+  const { mode } = useWebflowContext();
   const slotRef = useRef<HTMLSlotElement | null>(null);
   const { trackClick, trackFormSubmitStatus } = useTracking();
   const currentYear = new Date().getFullYear();
@@ -259,7 +261,7 @@ const SignupForm = (props: {
               <FormItem className="mt-2 mr-2 flex w-full flex-col gap-2">
                 <FormControl>
                   <Input
-                    className="h-10 rounded-none sm:h-12 border-gray-300"
+                    className="h-10 rounded-none border-gray-300 sm:h-12"
                     placeholder="Email"
                     aria-describedby="email-message"
                     data-field-id="email"
@@ -381,17 +383,20 @@ const SignupForm = (props: {
               </FormItem>
             )}
           />
-          <slot name={id} ref={slotRef}></slot>
-          {findHost() &&
-            createPortal(
-              <div slot={id}>
-                <BotVerification
-                  onTokenObtained={handleTokenObtained}
-                  {...{ siteKey }}
-                />
-              </div>,
-              findHost()
-            )}
+          {mode !== "publish" && findHost() && (
+            <>
+              <slot name={id} ref={slotRef}></slot>
+              {createPortal(
+                <div slot={id}>
+                  <BotVerification
+                    onTokenObtained={handleTokenObtained}
+                    siteKey={siteKey}
+                  />
+                </div>,
+                findHost()
+              )}
+            </>
+          )}
         </div>
         <FooterBtn
           currentStep="personal-detail"
