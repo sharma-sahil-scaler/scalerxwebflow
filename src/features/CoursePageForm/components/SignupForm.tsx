@@ -383,7 +383,7 @@ const SignupForm = (props: {
               </FormItem>
             )}
           />
-          {mode !== "publish" && findHost() && (
+          {mode === "publish" && findHost() && (
             <>
               <slot name={id} ref={slotRef}></slot>
               {createPortal(
