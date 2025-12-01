@@ -88,6 +88,7 @@ const SignupForm = (props: {
     },
   });
   const { mode } = useWebflowContext();
+  console.log("Mode", mode)
   const slotRef = useRef<HTMLSlotElement | null>(null);
   const { trackClick, trackFormSubmitStatus } = useTracking();
   const currentYear = new Date().getFullYear();
