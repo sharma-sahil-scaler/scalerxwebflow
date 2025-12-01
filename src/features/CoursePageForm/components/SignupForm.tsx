@@ -385,9 +385,9 @@ const SignupForm = (props: {
               </FormItem>
             )}
           />
+          <slot name={id} ref={slotRef}></slot>
           {mode === "publish" && findHost() && (
             <>
-              <slot name={id} ref={slotRef}></slot>
               {createPortal(
                 <div slot={id}>
                   <BotVerification
