@@ -112,14 +112,6 @@ const SignupForm = (props: {
     setToken(token);
   }, []);
 
-  const findHost = useCallback(() => {
-    const root = slotRef.current?.getRootNode();
-    if (root instanceof ShadowRoot) {
-      return root.host as HTMLElement;
-    }
-    return null;
-  }, []);
-
   const handleSubmit = useCallback(
     async (data: z.infer<typeof formSchema>) => {
       try {
@@ -247,6 +239,15 @@ const SignupForm = (props: {
     },
     [trackClick, clickSection, clickSource]
   );
+
+  const findHost = () => {
+    const root = slotRef.current?.getRootNode();
+    if (root instanceof ShadowRoot) {
+      return root.host as HTMLElement;
+    }
+    return null;
+
+  }
 
   return (
     <Form {...form}>
