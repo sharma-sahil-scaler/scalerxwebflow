@@ -55,3 +55,7 @@ export const PROGRAM_MAPPING = {
   devops: 'devops',
   'ai-ml': 'ai_ml',
 };
+
+export const ATTRIBUTION_PROGRAM_MAPPING: Record<string, string> = {
+  academy: "software_development",
+};

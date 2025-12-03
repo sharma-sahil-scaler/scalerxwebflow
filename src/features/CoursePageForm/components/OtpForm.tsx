@@ -24,7 +24,7 @@ import {
 } from "@/common/components/ui/input-otp";
 import { ApiError } from "@/common/utils/api";
 import { FooterBtn } from "./FooterBtn";
-import { VERIFY_OTP_ERROR_MAP } from "../constant";
+import { VERIFY_OTP_ERROR_MAP, ATTRIBUTION_PROGRAM_MAPPING } from "../constant";
 import { useTracking } from "@/common/hooks/useTracking";
 import attribution from "@/common/utils/attribution";
 
@@ -39,10 +39,7 @@ const OtpForm = (props: {
   clickSection: string;
 }) => {
   const { intent, clickSource, clickSection, program } = props;
-  const {
-    email,
-    phoneNumber,
-  } = useStore(defaultFormStore);
+  const { email, phoneNumber } = useStore(defaultFormStore);
   const [submitting, setSubmitting] = useState(false);
   const form = useForm<z.infer<typeof otpSchema>>({
     resolver: zodResolver(otpSchema),
@@ -75,7 +72,7 @@ const OtpForm = (props: {
         trackClick({ click_source: "otp_form", click_type: "otp_submit" });
         setSubmitting(true);
         attribution.setAttribution(intent, {
-          program,
+          program: ATTRIBUTION_PROGRAM_MAPPING[program] || program,
         });
         await verifyUser({
           source: "Course Page",
@@ -109,8 +106,12 @@ const OtpForm = (props: {
       } catch (error: unknown) {
         let errorMessage = VERIFY_OTP_ERROR_MAP.default;
         if (error instanceof ApiError) {
-          const status = error.response?.status;
-          errorMessage = VERIFY_OTP_ERROR_MAP[status];
+          const statusKey =
+            error.response?.status !== undefined
+              ? String(error.response.status)
+              : "default";
+          errorMessage =
+            VERIFY_OTP_ERROR_MAP[statusKey] ?? VERIFY_OTP_ERROR_MAP.default;
           toast.show({
             title: "OTP verification failed",
             description: errorMessage,
