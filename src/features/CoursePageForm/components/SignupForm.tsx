@@ -84,7 +84,7 @@ const SignupForm = (props: {
       phone_number: "",
       orgyear: "",
       position: "",
-      whatsapp_consent: false,
+      whatsapp_consent: true,
     },
   });
   const { mode } = useWebflowContext();
