@@ -181,7 +181,7 @@ const OtpForm = (props: {
                         return (
                           <InputOTPSlot
                             key={index}
-                            className="h-12 flex-1 rounded-none"
+                            className="h-12 flex-1 rounded-none border border-solid border-[#d1d5db]"
                             index={index}
                           />
                         );
