@@ -27,6 +27,7 @@ interface VerifyOtpPayload {
     email?: string;
     skip_existing_user_check?: boolean;
     rcb_prams?: unknown
+    program?: string;
   };
 }
 
