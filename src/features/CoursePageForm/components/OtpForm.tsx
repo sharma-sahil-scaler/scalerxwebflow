@@ -82,6 +82,7 @@ const OtpForm = (props: {
             phone_number: formattedNumber || "",
             skip_existing_user_check: true,
             otp: data.otp,
+            program,
             rcb_prams: {
               attributions: attribution.getAttribution(),
             },
