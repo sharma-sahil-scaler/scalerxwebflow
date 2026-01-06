@@ -75,7 +75,7 @@ const SignupForm = (props: {
   clickSource: string;
   clickSection: string;
 }) => {
-  const { siteKey, clickSource, clickSection } = props;
+  const { siteKey, clickSource, clickSection, program } = props;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -133,6 +133,7 @@ const SignupForm = (props: {
             ...data,
             country_code: countryCode,
             phone_number: formattedNumber,
+            program,
             skip_existing_user_check: true,
             whatsapp_consent: toWhatsappConsent(data.whatsapp_consent),
           },
@@ -142,7 +143,7 @@ const SignupForm = (props: {
           await requestCallback({
             attributions: attribution.getAttribution(),
             user: {
-              program: "Online Mba",
+              program,
               position: data.position,
             },
           });
